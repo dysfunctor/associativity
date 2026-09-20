@@ -1,0 +1,408 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Interactive illustration of the restriction that embeds the perfect matching principle of a small bipartite graph into the associativity formula for array multipliers.">
+<title>Embedding perfect matching into Assoc</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;800&family=STIX+Two+Text:ital,wght@0,400;0,600;1,400&display=swap">
+<style>
+/* Single visual world: the talk's off-white slides. Painted explicitly on every surface. */
+:root{
+  --paper:#F9F7F1; --ink:#111111; --ink-soft:#5C5952; --rule:#8C877D; --rule-faint:#C9C4B8;
+  --tan:#F0EADF; --band:#E3E0D8; --box:#FFFFFF;
+  --rust:#C4501B; --rust-tint:#F0D8CB; --rust-wash:rgba(196,80,27,.22);
+  --blue:#3352C9; --blue-tint:#EEF1FB;
+  --red:#D62828; --green:#2E8B57; --green-tint:#E6F2EA;
+  --sans:"Manrope","Helvetica Neue",Arial,sans-serif;
+  --serif:"STIX Two Text","Latin Modern Roman","Computer Modern","Times New Roman",Times,serif;
+}
+body{background:var(--paper);color:var(--ink);font-family:var(--sans);font-size:15px;line-height:1.55;
+  padding-inline:20px;padding-block:30px 70px;color-scheme:light;}
+main{max-width:1200px;margin:0 auto;}
+h1{font-family:var(--sans);font-weight:800;font-size:30px;letter-spacing:-.02em;margin:0 0 8px;text-wrap:balance;}
+h2{font-family:var(--sans);font-weight:800;font-size:21px;letter-spacing:-.015em;margin:0 0 8px;text-wrap:balance;}
+p{margin:0 0 10px;max-width:72ch;}
+.lede{font-size:16px;max-width:none;color:var(--ink);}
+.m{font-family:var(--serif);font-style:italic;font-size:1.06em;}
+.mr{font-family:var(--serif);font-style:normal;font-size:1.06em;}
+b.v{font-family:var(--serif);font-weight:700;font-style:normal;font-size:1.06em;}
+.acc{color:var(--rust);}
+sub{font-size:72%;line-height:0;}
+.eyebrow{font-family:var(--sans);font-weight:600;font-size:11px;letter-spacing:.09em;text-transform:uppercase;color:var(--ink-soft);margin-bottom:8px;}
+section{margin-top:18px;}
+.grid-top{display:grid;grid-template-columns:minmax(240px,300px) 1fr;gap:28px 36px;align-items:center;margin-top:26px;}
+@media (max-width:820px){.grid-top{grid-template-columns:1fr;}}
+.graph-wrap svg{width:100%;height:auto;display:block;}
+.hint{font-size:13.5px;color:var(--ink-soft);margin-top:10px;max-width:none;}
+table{border-collapse:collapse;font-size:14.5px;}
+td,th{padding:4px 12px 4px 0;text-align:left;vertical-align:top;border-bottom:1px solid var(--rule-faint);}
+th{font-family:var(--sans);font-weight:600;color:var(--ink-soft);font-size:12px;letter-spacing:.03em;}
+td.num{font-family:var(--serif);font-size:15px;font-variant-numeric:tabular-nums;}
+.scroll{overflow-x:auto;padding-bottom:6px;}
+figure{margin:14px 0 0;}
+.tabs{display:flex;gap:4px;border-bottom:1px solid var(--rule-faint);margin-top:10px;}
+.tab{font-family:var(--sans);font-size:15px;color:var(--ink-soft);background:none;border:none;border-bottom:2.5px solid transparent;margin-bottom:-1px;padding:8px 14px;cursor:pointer;}
+.tab:hover{color:var(--ink);}
+.tab.active{color:var(--ink);border-bottom-color:var(--rust);}
+.tab:focus-visible{outline:2px solid var(--rust);outline-offset:-2px;border-radius:3px;}
+figcaption{font-size:13.5px;color:var(--ink-soft);max-width:82ch;margin-top:8px;}
+figure svg{display:block;max-width:100%;height:auto;}
+/* SVG */
+.outline{fill:none;stroke:var(--ink);stroke-width:1.1;}
+.slot{stroke:var(--rule-faint);stroke-width:.9;stroke-dasharray:3 3;}
+.band{fill:var(--band);}
+.band.deep{fill:#C9D1EE;}
+.strip{fill:#E4E8F7;}
+.strip.ok{fill:#DFEFE4;} .band.deep.ok{fill:#BEDCC8;}
+.strip.bad{fill:#F7DCDA;} .band.deep.bad{fill:#EDB9B4;}
+.rho{font-family:var(--sans);font-weight:600;font-size:11px;fill:var(--rust);}
+.rhotxt{font-family:var(--serif);font-size:10.5px;fill:var(--ink);text-anchor:middle;dominant-baseline:central;}
+.rhotxt.red{fill:var(--red);font-weight:600;}
+.rhotxt.dash{fill:var(--rust);}
+.brace{fill:none;stroke:var(--rust);stroke-width:1.2;}
+.brace.ok{stroke:var(--green);} .brace.bad{stroke:var(--red);}
+.bracetxt.ok{fill:var(--green);} .bracetxt.bad{fill:var(--red);}
+.kbox{fill:none;stroke:var(--red);stroke-width:1.5;}
+.ktxt{font-family:var(--sans);font-weight:600;font-size:11px;fill:var(--red);text-anchor:middle;dominant-baseline:central;}
+.bracetxt{font-family:var(--serif);font-size:11.5px;fill:var(--rust);text-anchor:middle;dominant-baseline:central;}
+.guide{stroke:var(--rule);stroke-width:.8;stroke-dasharray:4 3;fill:none;}
+.guide.blue{stroke:var(--blue);}
+.lbl{font-family:var(--serif);font-size:10px;fill:var(--ink);}
+.lbl.soft{fill:var(--ink-soft);}
+.lbl.i{font-style:italic;}
+.lbl.blue{fill:var(--blue);}
+.lbl.rust{fill:var(--rust);}
+.lbl.hd{font-size:12px;}
+.sans{font-family:var(--sans);font-size:10px;fill:var(--ink-soft);}
+.cell{fill:var(--box);stroke:var(--ink);stroke-width:.8;}
+.cell.zero{stroke:var(--rule);stroke-width:.6;}
+.cell.var{stroke:var(--rust);}
+.cell.var.on{fill:var(--rust-tint);}
+.celltxt{font-family:var(--serif);font-size:10.5px;fill:var(--ink);text-anchor:middle;dominant-baseline:central;}
+.celltxt.zero{fill:var(--ink-soft);}
+.celltxt.var{fill:var(--rust);font-style:italic;}
+.chain{stroke:var(--ink);stroke-width:.8;stroke-dasharray:1.5 2.2;fill:none;}
+.wire{stroke:var(--ink);stroke-width:.8;fill:none;}
+.wire.bold{stroke-width:1.6;}
+.carry{stroke:var(--ink);stroke-width:.6;fill:none;}
+.outbox{fill:var(--box);stroke:var(--rust);stroke-width:1;stroke-dasharray:3 2.5;rx:4;}
+.outbox.red{stroke:var(--red);stroke-width:1.6;stroke-dasharray:none;}
+.outbox.plain{stroke:var(--rule-faint);stroke-dasharray:none;}
+.outtxt{font-family:var(--serif);font-size:10.5px;fill:var(--ink);text-anchor:middle;dominant-baseline:central;letter-spacing:2.2px;}
+.outtxt.red{fill:var(--red);font-weight:600;}
+.bluebox{fill:var(--box);stroke:var(--blue);stroke-width:.9;rx:3;}
+/* graph */
+.frame{fill:var(--box);stroke:var(--ink);stroke-width:.8;}
+.edge{stroke:var(--ink);stroke-width:.9;fill:none;}
+.edge-wash{stroke:var(--rust-wash);stroke-width:11;fill:none;stroke-linecap:round;}
+.edge-hit{stroke:transparent;stroke-width:20;cursor:pointer;}
+.vtx{fill:var(--box);stroke:var(--ink);stroke-width:.9;}
+.vlbl{font-family:var(--serif);font-style:italic;font-size:13px;fill:var(--ink);text-anchor:middle;dominant-baseline:central;}
+.elbl{font-family:var(--serif);font-style:italic;font-size:13px;fill:var(--rust);text-anchor:middle;dominant-baseline:central;pointer-events:none;}
+.sum{font-family:var(--sans);font-weight:600;font-size:9.5px;text-anchor:middle;}
+.sum.ok{fill:var(--green);} .sum.bad{fill:var(--red);}
+/* bit strings */
+.bit{fill:var(--tan);stroke:var(--rule-faint);stroke-width:.8;}
+.bit.g{fill:var(--box);stroke:var(--ink);}
+.bit.var.on{fill:var(--rust-tint);stroke:var(--rust);}
+.bit.var{stroke:var(--rust);}
+.bittxt{font-family:var(--serif);font-size:14px;text-anchor:middle;dominant-baseline:central;fill:var(--ink);}
+.bl{font-family:var(--serif);font-size:12.5px;fill:var(--ink);}
+.bl.i{font-style:italic;}
+.bl.hd{font-size:14px;}
+#bits{width:100%;height:auto;}
+.bittxt.var{fill:var(--rust);font-style:italic;font-size:14px;}
+</style>
+
+</head>
+<body>
+<main>
+<h1>Embedding perfect matching into <span class="mr">Assoc<sub><i>n</i></sub></span></h1>
+<p class="lede">Given a graph, the perfect matching constraints assert that each node has exactly <span style="white-space:nowrap">one incident selected edge</span>.</p>
+<p class="lede">Click an edge to select it. Shaded <span class="m acc">e</span> are set to 1, unshaded <span class="m acc">e</span> are set to 0.</p>
+
+<div class="grid-top">
+  <div class="graph-wrap">
+    <svg id="graph" viewBox="0 0 250 270" role="img" aria-label="Bipartite graph with vertices u2, u1, u0 on top and v1, v0 below; edges e3, e2, e1, e0. Click an edge to toggle its variable."></svg>
+  </div>
+  <div>
+    <div class="scroll"><svg id="bits" role="img" aria-label="Three 36-bit vectors x, y, z showing where vertices and edges are placed."></svg></div>
+  </div>
+</div>
+
+
+<section>
+  <div class="tabs" id="tabs" role="tablist" aria-label="Multiplier"></div>
+  <div id="muls"></div>
+</section>
+
+</main>
+
+<script>
+(function(){
+const g=3, K=24, n=24;
+const U=[{name:'u₀',i:0},{name:'u₁',i:3},{name:'u₂',i:9}];
+const V=[{name:'v₀',k:21},{name:'v₁',k:0}];
+const E=[{name:'e₀',u:0,v:0},{name:'e₁',u:1,v:0},{name:'e₂',u:1,v:1},{name:'e₃',u:2,v:1}];
+E.forEach(e=>{e.j=K-U[e.u].i-V[e.v].k;});
+let X=[1,0,1,0];
+
+const SVGNS='http://www.w3.org/2000/svg';
+function el(tag,attrs,children){const x=document.createElementNS(SVGNS,tag);
+  for(const a in attrs){ if(attrs[a]!==undefined) x.setAttribute(a,attrs[a]); }
+  if(children) for(const c of children){ if(typeof c==='string') x.appendChild(document.createTextNode(c)); else if(c) x.appendChild(c);} return x;}
+// parts: strings, {sub:'..'}, {up:'..'} (upright), {it:'..'} (italic)
+function txt(x,y,cls,parts,anchor){const t=el('text',{x,y,class:cls,'text-anchor':anchor||'start'});
+  for(const p of parts){
+    if(typeof p==='string'){t.appendChild(document.createTextNode(p));}
+    else if(p.sub!==undefined){ t.appendChild(el('tspan',{'font-size':'72%','dy':'2.6'},[p.sub])); t.appendChild(el('tspan',{'dy':'-2.6'},[' '])); }
+    else if(p.up!==undefined){ t.appendChild(el('tspan',{'font-style':'normal'},[p.up])); }
+    else if(p.it!==undefined){ t.appendChild(el('tspan',{'font-style':'italic'},[p.it])); }
+  }
+  return t;}
+const estW=parts=>parts.reduce((w,p)=>w+(typeof p==='string'?p.length*5.4:(p.sub!==undefined?p.sub.length*4:(p.up||p.it).length*5.4)),0);
+
+/* ---------- graph ---------- */
+const gpos={u:[[200,46],[125,46],[50,46]], v:[[162,222],[88,222]]};
+function vertexCounts(){const cu=U.map(()=>0), cv=V.map(()=>0);
+  E.forEach((e,idx)=>{cu[e.u]+=X[idx];cv[e.v]+=X[idx];}); return {u:cu,v:cv};}
+function renderGraph(){
+  const svg=document.getElementById('graph'); svg.innerHTML='';
+  svg.appendChild(el('rect',{x:6,y:6,width:238,height:258,class:'frame'}));
+  const counts=vertexCounts();
+  // washes first, then edges, then vertices
+  E.forEach((e,idx)=>{ if(!X[idx]) return; const [x1,y1]=gpos.u[e.u],[x2,y2]=gpos.v[e.v];
+    svg.appendChild(el('line',{x1,y1,x2,y2,class:'edge-wash'}));});
+  E.forEach((e,idx)=>{
+    const [x1,y1]=gpos.u[e.u], [x2,y2]=gpos.v[e.v];
+    svg.appendChild(el('line',{x1,y1,x2,y2,class:'edge'}));
+    const hit=el('line',{x1,y1,x2,y2,class:'edge-hit',role:'button',tabindex:'0','aria-label':'Toggle edge '+e.name+' (currently '+X[idx]+')'});
+    hit.addEventListener('click',()=>{X[idx]^=1;renderAll();});
+    hit.addEventListener('keydown',ev=>{if(ev.key==='Enter'||ev.key===' '){ev.preventDefault();X[idx]^=1;renderAll();}});
+    svg.appendChild(hit);
+    const mx=(x1+x2)/2, my=(y1+y2)/2, dx=x2-x1, dy=y2-y1, L=Math.hypot(dx,dy), nx=-dy/L, ny=dx/L;
+    const side=(idx===1||idx===2||idx===3)?1:-1;
+    svg.appendChild(el('text',{x:mx+nx*13*side,y:my,class:'elbl'},[e.name]));
+  });
+  const vtx=(x,y,name,c,below)=>{
+    svg.appendChild(el('circle',{cx:x,cy:y,r:14,class:'vtx'}));
+    svg.appendChild(el('text',{x,y,class:'vlbl'},[name]));
+    svg.appendChild(el('text',{x,y:below?y+27:y-21,class:'sum '+(c===1?'ok':'bad')},['Σ = '+c]));};
+  U.forEach((u,idx)=>{const [x,y]=gpos.u[idx]; vtx(x,y,u.name,counts.u[idx],false);});
+  V.forEach((v,idx)=>{const [x,y]=gpos.v[idx]; vtx(x,y,v.name,counts.v[idx],true);});
+}
+
+/* ---------- bit strings ---------- */
+function renderBits(){
+  const svg=document.getElementById('bits'); svg.innerHTML='';
+  const cw=29, ch=27, left=44, top=30, gapY=76;
+  const W=left+n*cw+20, H=top+3*gapY+6;
+  svg.setAttribute('viewBox','0 0 '+W+' '+H); svg.setAttribute('width',W); svg.setAttribute('height',H);
+  const xOf=b=>left+(n-1-b)*cw;
+  for(let b=0;b<n;b+=g) svg.appendChild(el('text',{x:xOf(b)+cw/2,y:18,class:'bl','text-anchor':'middle'},[String(b)]));
+  const rows=[
+    {lab:'x',vals:b=>{const u=U.find(u=>u.i===b);return u?{t:'1',mark:u.name}:{t:'0'};}},
+    {lab:'y',vals:b=>{const ei=E.findIndex(e=>e.j===b);return ei>=0?{t:E[ei].name,cls:'var'+(X[ei]?' on':''),mark:E[ei].name,ei}:{t:'0'};}},
+    {lab:'z',vals:b=>{const v=V.find(v=>v.k===b);return v?{t:'1',mark:v.name}:{t:'0'};}},
+  ];
+  rows.forEach((r,ri)=>{
+    const y=top+ri*gapY;
+    svg.appendChild(txt(8,y+ch/2+5,'bl hd',[{up:''},r.lab],'start')).setAttribute('font-weight','700');
+    svg.appendChild(el('text',{x:8+11,y:y+ch/2+5,class:'bl hd'},[':']));
+    for(let b=0;b<n;b++){
+      const v=r.vals(b); const isG=b%g===0;
+      const rect=el('rect',{x:xOf(b),y,width:cw,height:ch,class:'bit'+(isG?' g':'')+(v.cls?' '+v.cls:'')});
+      if(v.ei!==undefined){rect.style.cursor='pointer';rect.addEventListener('click',()=>{X[v.ei]^=1;renderAll();});}
+      svg.appendChild(rect);
+      const t=el('text',{x:xOf(b)+cw/2,y:y+ch/2,class:'bittxt'+(v.cls?' '+v.cls:'')});
+      t.appendChild(document.createTextNode(v.t));
+      if(v.ei!==undefined){t.style.cursor='pointer';t.addEventListener('click',()=>{X[v.ei]^=1;renderAll();});}
+      svg.appendChild(t);
+      if(v.mark){
+        svg.appendChild(el('text',{x:xOf(b)+cw/2,y:y+ch+15,class:'bl','text-anchor':'middle'},['↑']));
+        svg.appendChild(el('text',{x:xOf(b)+cw/2,y:y+ch+32,class:'bl i','text-anchor':'middle'},[v.mark]));
+      }
+    }
+  });
+}
+
+/* ---------- multipliers ---------- */
+function xBits(){return U.map(u=>({bit:u.i,kind:'one',label:[{it:'x'},{sub:String(u.i)},' = 1']}));}
+function zBits(){return V.map(v=>({bit:v.k,kind:'one',label:[{it:'z'},{sub:String(v.k)},' = 1']}));}
+function yBits(){return E.map((e,idx)=>({bit:e.j,kind:'var',e:idx,label:[{it:'y'},{sub:String(e.j)},' = ',{it:e.name}]}));}
+function xyOut(){const m=new Map();
+  U.forEach((u,ui)=>E.forEach((e,ei)=>{const c=u.i+e.j; if(ui===e.u){m.set(c,{bit:c,kind:'one',label:['(xy)',{sub:String(c)},' = 1']});}
+    else m.set(c,{bit:c,kind:'var',e:ei,label:['(xy)',{sub:String(c)},' = ',{it:e.name}]});}));
+  return [...m.values()].sort((a,b)=>a.bit-b.bit);}
+function yzOut(){const m=new Map();
+  E.forEach((e,ei)=>V.forEach((v,vi)=>{const c=e.j+v.k; if(vi===e.v){m.set(c,{bit:c,kind:'one',label:['(yz)',{sub:String(c)},' = 1']});}
+    else m.set(c,{bit:c,kind:'var',e:ei,label:['(yz)',{sub:String(c)},' = ',{it:e.name}]});}));
+  return [...m.values()].sort((a,b)=>a.bit-b.bit);}
+const val=d=>d.kind==='one'?1:X[d.e];
+
+function innerXYcols(){const m={}; V.forEach(v=>{m[K-v.k]={fixed:1,head:['col',{sub:'xy'},'(',{it:v.name},')'],name:[{it:'E'},'(',{it:v.name},')'],who:'star'};});
+  U.forEach((u,ui)=>E.forEach((e,ei)=>{if(ui!==e.u){m[u.i+e.j]={unset:true,name:[{it:e.name}],who:'single'};}})); return m;}
+function innerYZcols(){const m={}; U.forEach(u=>{m[K-u.i]={fixed:1,head:['col',{sub:'yz'},'(',{it:u.name},')'],name:[{it:'E'},'(',{it:u.name},')'],who:'star'};});
+  E.forEach((e,ei)=>V.forEach((v,vi)=>{if(vi!==e.v){m[e.j+v.k]={unset:true,name:[{it:e.name}],who:'single'};}})); return m;}
+function outerCols(diags,rows,side){const m={};
+  diags.forEach(d=>rows.forEach(r=>{const c=d.bit+r.bit; m[c]=m[c]||{edges:new Set(),ones:0};
+    if(d.kind==='var') m[c].edges.add(d.e); else m[c].ones++;}));
+  for(const c in m){const o=m[c]; if(+c===K){o.name=[];o.head=[{it:'K'}];o.who='K';o.eq=side;}
+    else if(o.edges.size===0){o.name=['const'];o.who='const';}
+    else if(o.edges.size===1){o.name=[{it:E[[...o.edges][0]].name}];o.who='single';}
+    else{const es=[...o.edges]; const u=E[es[0]].u, v=E[es[0]].v;
+      const sameU=es.every(x=>E[x].u===u), sameV=es.every(x=>E[x].v===v);
+      o.name=[{it:'E'},'(',{it:sameU?U[u].name:(sameV?V[v].name:'?')},')'];o.who='star';}}
+  return m;}
+
+function buildMul(spec){
+  const px=22, ry=20, MT=52, ML=spec.outer?150:104, MR=130, R=n, nF=spec.nFirst;
+  const Cmax=spec.clip;
+  const X0=ML+(Cmax+1)*px;
+  const xl=c=>X0-(c+1)*px, xc=c=>X0-(c+0.5)*px;
+  const yc=r=>MT+r*ry+ry/2;
+  const bottom=MT+R*ry;
+  const W=X0+24, H=bottom+84;
+  const cw=17, chh=14;
+  const svg=el('svg',{viewBox:'0 0 '+W+' '+H,width:W,height:H,role:'img','aria-label':spec.aria});
+  const defs=el('defs',{});
+  defs.appendChild(el('clipPath',{id:spec.id+'-clip'},[el('rect',{x:ML-2,y:0,width:W-ML+2,height:H})]));
+  defs.appendChild(el('marker',{id:spec.id+'-arr',viewBox:'0 0 6 6',refX:'5',refY:'3',markerWidth:'3',markerHeight:'3',orient:'auto'},[el('path',{d:'M0,0 L6,3 L0,6 z',fill:'currentColor'})]));
+  svg.appendChild(defs);
+  const body=el('g',{'clip-path':'url(#'+spec.id+'-clip)',style:'color:#111'}); svg.appendChild(body);
+  const ARR='url(#'+spec.id+'-arr)';
+  const diagAt={}; spec.diags.forEach(d=>{diagAt[d.bit]=d;});
+  const rowAt={}; spec.rows.forEach(r=>{rowAt[r.bit]=r;});
+  // g-column slots and bands (active columns = those holding a nonzero-capable partial product)
+  const cols={}; spec.diags.forEach(d=>spec.rows.forEach(r=>{const c=d.bit+r.bit; if(c<=Cmax) cols[c]=true;}));
+  const colList=Object.keys(cols).map(Number).sort((a,b)=>a-b);
+  for(let b=0;b<=Cmax;b+=g){ for(const xx of [xl(b),xl(b)+px]) body.appendChild(el('line',{x1:xx,y1:MT-16,x2:xx,y2:bottom+14,class:'slot'})); }
+  const shade={};
+  colList.forEach(c=>{const a=spec.cols[c]||{};
+    let sr=null; if(a.head){ sr=el('rect',{x:xl(c+g-1),y:MT-16,width:g*px,height:bottom-MT+30,class:'strip'}); body.appendChild(sr); }
+    const br=el('rect',{x:xl(c),y:MT-16,width:px,height:bottom-MT+30,class:'band'+(a.head?' deep':'')}); body.appendChild(br);
+    if(a.fixed!==undefined) shade[c]={sr,br};});
+  for(let b=0;b<=Cmax;b+=g){ body.appendChild(el('text',{x:xc(b),y:MT-6,class:'lbl','text-anchor':'middle'},[String(b)])); }
+  // full adder grid: cell (i,j) at column i+j, row j
+  const cellRect={}; // key c,j -> rect for variable cells
+  const varCells=[];
+  const box=(i,j)=>{const c=i+j; return {x:xc(c)-cw/2,y:yc(j)-chh/2,cx:xc(c),cy:yc(j),c};};
+  for(let j=0;j<R;j++){
+    for(let i=0;i<nF;i++){
+      const c=i+j; if(c>Cmax+1) continue;
+      const b=box(i,j); const d=diagAt[i], r=rowAt[j];
+      let cls='cell zero', label=null, e=null;
+      if(d&&r){ if(d.kind==='var'||r.kind==='var'){ e=d.kind==='var'?d.e:r.e; cls='cell var'; label='e'; } else { cls='cell'; label='1'; } }
+      const rect=el('rect',{x:b.x,y:b.y,width:cw,height:chh,class:cls});
+      body.appendChild(rect);
+      if(label==='1'){ body.appendChild(el('text',{x:b.cx,y:b.cy,class:'celltxt'},['1'])); }
+      if(e!==null){
+        rect.style.cursor='pointer'; rect.addEventListener('click',()=>{X[e]^=1;renderAll();});
+        const t=el('text',{x:b.cx,y:b.cy,class:'celltxt var'}); t.appendChild(document.createTextNode(E[e].name)); t.style.pointerEvents='none'; body.appendChild(t);
+        varCells.push({rect,e});
+      }
+      // carry to the left neighbour (i+1,j), or the diagonal step for the leftmost cell
+      if(i+1<nF){ body.appendChild(el('line',{x1:b.x-0.5,y1:b.cy,x2:b.x-(px-cw)+1,y2:b.cy,class:'carry','marker-end':ARR})); }
+      else if(j+1<R){ const nb=box(i,j+1); body.appendChild(el('line',{x1:b.x-0.5,y1:b.cy+2,x2:nb.cx+2,y2:nb.y-1,class:'carry','marker-end':ARR})); }
+      else { body.appendChild(el('polyline',{points:[[b.x-0.5,b.cy],[b.x-px/2,b.cy],[b.x-px/2,bottom+12]].map(p=>p.join(',')).join(' '),class:'wire','marker-end':ARR})); }
+      // sum downwards: to (i-1,j+1) in the same column, else to the output edge
+      if(i>=1&&j+1<R){ body.appendChild(el('line',{x1:b.cx,y1:b.y+chh+0.5,x2:b.cx,y2:b.y+ry-1,class:'wire','marker-end':ARR})); }
+      else { body.appendChild(el('line',{x1:b.cx,y1:b.y+chh+0.5,x2:b.cx,y2:bottom+12,class:'wire'+(cols[c]?' bold':''),'marker-end':ARR})); }
+    }
+  }
+  if(spec.cut){ body.appendChild(el('text',{x:ML+6,y:MT-24,class:'sans'},['⋯ continues'])); }
+  // operand labels: diagonals along the top (staggered), rows on the right
+  let hi=0;
+  colList.forEach(c=>{const a=spec.cols[c]; if(!a||!a.head) return; const y=MT-26; hi++;
+    svg.appendChild(txt(xc(c),y,'lbl hd',a.head,'middle'));});
+  // strip outputs
+  const outs=[]; const rhoDigits={}; const fixedStrips=[];
+  if(!spec.outer){
+    // one row: rho's value for every output bit, gaps where rho leaves a bit unset
+    const yRow=bottom+30;
+    const runs=[]; let run=null;
+    for(let c=0;c<=Cmax;c++){
+      const a=spec.cols[c]||{};
+      if(a.unset){ if(run){runs.push(run);run=null;} body.appendChild(el('text',{x:xc(c),y:yRow,class:'rhotxt dash'},['\u2013'])); continue; }
+      const v=a.fixed!==undefined?'1':'0';
+      const t=el('text',{x:xc(c),y:yRow,class:'rhotxt'},[v]); body.appendChild(t); rhoDigits[c]={t,v};
+      if(!run) run={lo:c,hi:c}; else run.hi=c;
+      if(a.fixed!==undefined) fixedStrips.push(c);
+    }
+    if(run) runs.push(run);
+    svg.appendChild(el('text',{x:xl(Cmax)-8,y:yRow+4,class:'rho','text-anchor':'end'},['Fix output bits:']));
+    // under-brace with the constraint for each node-labelled strip
+    fixedStrips.forEach(b=>{ const x0=xl(b+g-1)+2, x1=xl(b)+px-2, mid=(x0+x1)/2, y=yRow+11, d=5;
+      const br=el('path',{d:`M${x0},${y} Q${x0},${y+d} ${x0+d},${y+d} L${mid-d},${y+d} Q${mid},${y+d} ${mid},${y+2*d} Q${mid},${y+d} ${mid+d},${y+d} L${x1-d},${y+d} Q${x1},${y+d} ${x1},${y}`,class:'brace'});
+      const bt=el('text',{x:mid,y:y+2*d+11,class:'bracetxt'},['\u03a3 = 1']);
+      body.appendChild(br); body.appendChild(bt); if(shade[b]){shade[b].brace=br;shade[b].label=bt;} });
+  } else {
+    // one row of computed output bits for the whole product
+    const yRow=bottom+30;
+    for(let c=0;c<=Cmax;c++){ const t=el('text',{x:xc(c),y:yRow,class:'rhotxt'},['0']); body.appendChild(t); rhoDigits[c]={t,v:'0'}; }
+    svg.appendChild(el('text',{x:xl(Cmax)-8,y:yRow+4,class:'rho','text-anchor':'end'},['Propagated output bits:']));
+    // the miter bit: box the output at column K and name it
+    body.appendChild(el('rect',{x:xl(K)+1,y:yRow-9,width:px-2,height:18,rx:3,class:'kbox'}));
+    body.appendChild(el('text',{x:xc(K),y:yRow+24,class:'ktxt'},['disagreeing output bit']));
+  }
+  function update(){
+    varCells.forEach(v=>{ v.rect.setAttribute('class','cell var'+(X[v.e]?' on':'')); });
+    outs.forEach(o=>{ let cnt=0; spec.rows.forEach(r=>{const d=diagAt[o.c-r.bit]; if(d) cnt+=val(d)*val(r);});
+      const bad=(o.a.fixed!==undefined&&cnt!==o.a.fixed);
+      o.t.textContent=cnt.toString(2).padStart(g,'0');
+      o.t.setAttribute('class','outtxt'+(bad?' red':''));
+      o.rect.setAttribute('class','outbox'+(bad?' red':(o.boxed?'':' plain'))); });
+    if(spec.outer){ for(let b=0;b<=Cmax;b+=g){ let cnt=0; spec.rows.forEach(r=>{const d=diagAt[b-r.bit]; if(d) cnt+=val(d)*val(r);});
+        const bits=cnt.toString(2).padStart(g,'0'); for(let t=0;t<g;t++){ const d=rhoDigits[b+t]; if(d) d.t.textContent=bits[g-1-t]; } } }
+    fixedStrips.forEach(b=>{ let cnt=0; spec.rows.forEach(r=>{const d=diagAt[b-r.bit]; if(d) cnt+=val(d)*val(r);});
+      const ok=cnt===1, sh=shade[b]; if(!sh) return;
+      sh.sr.setAttribute('class','strip '+(ok?'ok':'bad')); sh.br.setAttribute('class','band deep '+(ok?'ok':'bad'));
+      if(sh.brace){ sh.brace.setAttribute('class','brace '+(ok?'ok':'bad')); sh.label.setAttribute('class','bracetxt '+(ok?'ok':'bad')); } });
+  }
+  update();
+  return {svg,update};
+}
+
+let mulUpdaters=null;
+function renderMuls(){
+  if(mulUpdaters){ mulUpdaters.forEach(u=>u()); return; }
+  const host=document.getElementById('muls'); host.innerHTML='';
+  const xo=xyOut(), yo=yzOut();
+  const specs=[
+    {id:'xy',tab:'<b class="v">xy</b>',nFirst:n,clip:n+n-1,diags:xBits(),rows:yBits(),cols:innerXYcols(),
+     aria:'Inner multiplier xy under the restriction',
+     cap:''},
+    {id:'yz',tab:'<b class="v">yz</b>',nFirst:n,clip:n+n-1,diags:yBits(),rows:zBits(),cols:innerYZcols(),
+     aria:'Inner multiplier yz under the restriction',
+     cap:''},
+    {id:'xyz',tab:'(<b class="v">xy</b>)<b class="v">z</b>',nFirst:2*n,clip:52,cut:true,outer:true,diags:xo,rows:zBits(),cols:outerCols(xo,zBits(),'V'),
+     aria:'Outer multiplier (xy)z under the restriction',
+     cap:''},
+    {id:'xyz2',tab:'<b class="v">x</b>(<b class="v">yz</b>)',nFirst:2*n,clip:52,cut:true,outer:true,diags:yo,rows:xBits(),cols:outerCols(yo,xBits(),'U'),
+     aria:'Outer multiplier x(yz) under the restriction',
+     cap:''},
+  ];
+  mulUpdaters=[];
+  const tabs=document.getElementById('tabs'); tabs.innerHTML='';
+  const panels=[], buttons=[];
+  const select=i=>{ panels.forEach((p,k)=>{p.hidden=(k!==i);}); buttons.forEach((b,k)=>{b.classList.toggle('active',k===i); b.setAttribute('aria-selected',k===i?'true':'false'); b.tabIndex=k===i?0:-1;}); };
+  specs.forEach((sp,i)=>{
+    const b=document.createElement('button'); b.type='button'; b.className='tab'; b.setAttribute('role','tab'); b.id='tab-'+sp.id;
+    b.innerHTML=sp.tab; b.addEventListener('click',()=>select(i));
+    b.addEventListener('keydown',ev=>{ if(ev.key==='ArrowRight'||ev.key==='ArrowLeft'){ ev.preventDefault(); const j=(i+(ev.key==='ArrowRight'?1:specs.length-1))%specs.length; select(j); buttons[j].focus(); } });
+    tabs.appendChild(b); buttons.push(b);
+    const fig=document.createElement('figure'); fig.setAttribute('role','tabpanel'); fig.setAttribute('aria-labelledby','tab-'+sp.id);
+    const sc=document.createElement('div'); sc.className='scroll'; const m=buildMul(sp); sc.appendChild(m.svg); fig.appendChild(sc);
+    mulUpdaters.push(m.update);
+    host.appendChild(fig); panels.push(fig);
+  });
+  select(0);
+}
+
+function renderAll(){renderGraph();renderBits();renderMuls();}
+renderAll();
+})();
+</script>
+</body>
+</html>
