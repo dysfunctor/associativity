@@ -18,10 +18,10 @@ Lemma [lem:indices] (construction of index maps).
 * `stripWidth m`: the strip width `g = ⌈log(m+2)⌉ + 2`.
 * `IsGolombRuler s`: every nonzero directed difference of marks determines its ordered pair.
 * `IndexMaps H g K n₀`: maps `i : U → ℕ`, `j : E → ℕ`, `k : V → ℕ` with the properties of
-  Lemma [lem:indices]: distinct positions (i), strip alignment (ii), the common column `K` of
-  the incident triples and the outer collision pattern (iv). The inner collision pattern (iii)
-  and (iv)(a) are derived: `IndexMaps.colXY_eq_colXYv_iff`, `IndexMaps.colXY_nonincident`,
-  `IndexMaps.colYZ_eq_colYZu_iff`, `IndexMaps.colYZ_nonincident`,
+  Lemma [lem:indices]: distinct positions that are multiples of `g` with `i u + j e + k v < n₀`
+  (i), the common column `K` of the incident triples and the outer collision pattern (iii). The
+  inner collision pattern (ii) and (iii)(a) are derived: `IndexMaps.colXY_eq_colXYv_iff`,
+  `IndexMaps.colXY_nonincident`, `IndexMaps.colYZ_eq_colYZu_iff`, `IndexMaps.colYZ_nonincident`,
   `IndexMaps.colOuter_eq_K_iff`.
 * `IndexMaps.colXY`, `IndexMaps.colYZ`, `IndexMaps.colOuter`: Definition [def:columns];
   `IndexMaps.colXYv v = K - k v` and `IndexMaps.colYZu u = K - i u`, the columns `col_xy(v)`
@@ -41,8 +41,9 @@ Lemma [lem:indices] (construction of index maps).
 
 * `IndexMaps` records the properties the rest of the argument uses rather than the concrete
   maps; the paper notes that only the properties of Lemma [lem:indices] are used afterwards.
-  Its fields are (i), (ii), the bounds `i u ≤ K`, `k v ≤ K`, `g ∣ K`, the common incident
-  column (`incident_col`) and (iv) as `colOuter_eq_iff`, `i_diff_unique`, `k_diff_unique`.
+  Its fields are (i), the further bounds `i u < n₀`, `i u + j e < n₀` etc., the bounds
+  `i u ≤ K`, `k v ≤ K`, `g ∣ K`, the common incident column (`incident_col`) and (iii) as
+  `colOuter_eq_iff`, `i_diff_unique`, `k_diff_unique`.
 * Differences are taken in `ℤ`. The construction needs the graph to be simple, as `j` is a
   function of the endpoints of an edge; `ExpanderGraph.simple` provides this.
 * The width `g` is a parameter with `0 < g`; the construction does not depend on its value,
@@ -202,12 +203,12 @@ theorem baseB_unique {R : ℕ} {a a' b b' : ℤ} (ha : |a| < R) (ha' : |a'| < R)
 /-! ### Index maps -/
 
 /-- Index maps as in Lemma [lem:indices]: maps `i : U → ℕ`, `j : E → ℕ`, `k : V → ℕ` to bit
-positions of `x`, `y`, `z`, with (i) distinct positions, (ii) strip alignment for the width
-`g` within `[0, n₀)`, the common column `K` of the incident triples `(u_e, e, v_e)`, and (iv)
-the outer collision pattern: the column `i u + j e + k v` is determined, injectively, by the
-difference pair `(i u - i u_e, k v - k v_e)`, and a nonzero difference determines its ordered
-pair of vertices. The inner collision pattern (iii) follows; see `IndexMaps.colXY_nonincident`
-and `IndexMaps.colXY_eq_colXYv_iff`.
+positions of `x`, `y`, `z`, with (i) distinct positions that are multiples of the width `g` and
+satisfy `i u + j e + k v < n₀`, the common column `K` of the incident triples `(u_e, e, v_e)`,
+and (iii) the outer collision pattern: the column `i u + j e + k v` is determined, injectively,
+by the difference pair `(i u - i u_e, k v - k v_e)`, and a nonzero difference determines its
+ordered pair of vertices. The inner collision pattern (ii) follows; see
+`IndexMaps.colXY_nonincident` and `IndexMaps.colXY_eq_colXYv_iff`.
 
 Paper: Lemma [lem:indices]. -/
 structure IndexMaps {U V E : Type*} (H : Bipartite U V E) (g K n₀ : ℕ) where
@@ -225,13 +226,13 @@ structure IndexMaps {U V E : Type*} (H : Bipartite U V E) (g K n₀ : ℕ) where
   i_lt : ∀ u, i u < n₀
   j_lt : ∀ e, j e < n₀
   k_lt : ∀ v, k v < n₀
-  /-- (ii) Strip alignment: the positions, hence the columns, are multiples of `g`. -/
+  /-- (i) The positions, hence the columns, are multiples of `g`. -/
   g_dvd_i : ∀ u, g ∣ i u
   g_dvd_j : ∀ e, g ∣ j e
   g_dvd_k : ∀ v, g ∣ k v
   g_dvd_K : g ∣ K
   g_dvd_n₀ : g ∣ n₀
-  /-- (ii) The columns lie in `[0, n₀)`. -/
+  /-- The columns lie in `[0, n₀)`; `colOuter_lt` is the bound `i u + j e + k v < n₀` of (i). -/
   colXY_lt : ∀ u e, i u + j e < n₀
   colYZ_lt : ∀ e v, j e + k v < n₀
   colOuter_lt : ∀ u e v, i u + j e + k v < n₀
@@ -244,16 +245,16 @@ structure IndexMaps {U V E : Type*} (H : Bipartite U V E) (g K n₀ : ℕ) where
   with a constant inner factor lie in `[0, n₀)`. -/
   K_add_i_lt : ∀ u, K + i u < n₀
   K_add_k_lt : ∀ v, K + k v < n₀
-  /-- (iv)(a) Every incident triple `(u_e, e, v_e)` lies in the column `K`. -/
+  /-- (iii)(a) Every incident triple `(u_e, e, v_e)` lies in the column `K`. -/
   incident_col : ∀ e, i (H.left e) + j e + k (H.right e) = K
-  /-- (iv) The column of a triple is determined, injectively, by its difference pair. -/
+  /-- (iii) The column of a triple is determined, injectively, by its difference pair. -/
   colOuter_eq_iff : ∀ u e v u' e' v', i u + j e + k v = i u' + j e' + k v' ↔
     ((i u : ℤ) - i (H.left e) = i u' - i (H.left e') ∧
       (k v : ℤ) - k (H.right e) = k v' - k (H.right e'))
-  /-- (iv)(b) A nonzero difference of `x`-positions determines its ordered pair of vertices. -/
+  /-- (iii)(b) A nonzero difference of `x`-positions determines its ordered pair of vertices. -/
   i_diff_unique : ∀ u e u' e', (i u : ℤ) - i (H.left e) = i u' - i (H.left e') →
     (i u : ℤ) - i (H.left e) ≠ 0 → u = u' ∧ H.left e = H.left e'
-  /-- (iv)(b) A nonzero difference of `z`-positions determines its ordered pair of vertices. -/
+  /-- (iii)(b) A nonzero difference of `z`-positions determines its ordered pair of vertices. -/
   k_diff_unique : ∀ v e v' e', (k v : ℤ) - k (H.right e) = k v' - k (H.right e') →
     (k v : ℤ) - k (H.right e) ≠ 0 → v = v' ∧ H.right e = H.right e'
 
@@ -281,12 +282,12 @@ def colOuter (u : U) (e : E) (v : V) : ℕ := I.i u + I.j e + I.k v
 
 /-- The column `col_xy(v) = K - k(v)` shared by the incident pairs `(u_e, e)`, `e ∈ E(v)`.
 
-Paper: Lemma [lem:indices] (iii)(a). -/
+Paper: Lemma [lem:indices] (ii)(a). -/
 def colXYv (v : V) : ℕ := K - I.k v
 
 /-- The column `col_yz(u) = K - i(u)` shared by the incident pairs `(e, v_e)`, `e ∈ E(u)`.
 
-Paper: Lemma [lem:indices] (iii)(b). -/
+Paper: Lemma [lem:indices] (ii)(b). -/
 def colYZu (u : U) : ℕ := K - I.i u
 
 theorem colOuter_eq (u : U) (e : E) (v : V) : I.colOuter u e v = I.colXY u e + I.k v := rfl
@@ -328,14 +329,14 @@ theorem strip_at_col (hg : 1 ≤ g) {col k : ℕ} (hdvd : g ∣ col) (hcol : col
   · rw [ha, Nat.mul_div_cancel_left a hg]
     exact ⟨by rw [Nat.mul_comm]; omega, by rw [Nat.add_mul, Nat.one_mul, Nat.mul_comm]; omega⟩
 
-/-- (iii)(a) Distinct vertices of `V` have distinct columns `col_xy(v)`. -/
+/-- (ii)(a) Distinct vertices of `V` have distinct columns `col_xy(v)`. -/
 theorem colXYv_injective : Function.Injective I.colXYv := by
   intro v v' h
   have h1 := I.k_le_K v
   have h2 := I.k_le_K v'
   exact I.k_injective (by unfold colXYv at h; omega)
 
-/-- (iii)(b) Distinct vertices of `U` have distinct columns `col_yz(u)`. -/
+/-- (ii)(b) Distinct vertices of `U` have distinct columns `col_yz(u)`. -/
 theorem colYZu_injective : Function.Injective I.colYZu := by
   intro u u' h
   have h1 := I.i_le_K u
@@ -344,7 +345,7 @@ theorem colYZu_injective : Function.Injective I.colYZu := by
 
 /-! #### The collision patterns -/
 
-/-- (iv)(a) The triples in the column `K` are exactly the incident triples `(u_e, e, v_e)`. -/
+/-- (iii)(a) The triples in the column `K` are exactly the incident triples `(u_e, e, v_e)`. -/
 theorem colOuter_eq_K_iff (u : U) (e : E) (v : V) :
     I.colOuter u e v = K ↔ u = H.left e ∧ v = H.right e := by
   have h := I.colOuter_eq_iff u e v (H.left e) e (H.right e)
@@ -352,7 +353,7 @@ theorem colOuter_eq_K_iff (u : U) (e : E) (v : V) :
   rw [colOuter, h, sub_self, sub_self, sub_eq_zero, sub_eq_zero, Nat.cast_inj, Nat.cast_inj,
     I.i_injective.eq_iff, I.k_injective.eq_iff]
 
-/-- (iii)(a) The pairs `(u, e)` in the column `col_xy(v)` are exactly the incident pairs
+/-- (ii)(a) The pairs `(u, e)` in the column `col_xy(v)` are exactly the incident pairs
 `(u_e, e)` with `e ∈ E(v)`. -/
 theorem colXY_eq_colXYv_iff (u : U) (e : E) (v : V) :
     I.colXY u e = I.colXYv v ↔ u = H.left e ∧ H.right e = v := by
@@ -369,11 +370,11 @@ theorem colXY_eq_colXYv_iff (u : U) (e : E) (v : V) :
     unfold colXYv
     omega
 
-/-- (iii)(a) The incident pair `(u_e, e)` lies in the column `col_xy(v_e)`. -/
+/-- (ii)(a) The incident pair `(u_e, e)` lies in the column `col_xy(v_e)`. -/
 theorem colXY_incident (e : E) : I.colXY (H.left e) e = I.colXYv (H.right e) :=
   (I.colXY_eq_colXYv_iff _ _ _).mpr ⟨rfl, rfl⟩
 
-/-- (iii)(b) The pairs `(e, v)` in the column `col_yz(u)` are exactly the incident pairs
+/-- (ii)(b) The pairs `(e, v)` in the column `col_yz(u)` are exactly the incident pairs
 `(e, v_e)` with `e ∈ E(u)`. -/
 theorem colYZ_eq_colYZu_iff (e : E) (v : V) (u : U) :
     I.colYZ e v = I.colYZu u ↔ v = H.right e ∧ H.left e = u := by
@@ -390,11 +391,11 @@ theorem colYZ_eq_colYZu_iff (e : E) (v : V) (u : U) :
     unfold colYZu
     omega
 
-/-- (iii)(b) The incident pair `(e, v_e)` lies in the column `col_yz(u_e)`. -/
+/-- (ii)(b) The incident pair `(e, v_e)` lies in the column `col_yz(u_e)`. -/
 theorem colYZ_incident (e : E) : I.colYZ e (H.right e) = I.colYZu (H.left e) :=
   (I.colYZ_eq_colYZu_iff _ _ _).mpr ⟨rfl, rfl⟩
 
-/-- (iii)(a) A non-incident pair `(u, e)`, `u ≠ u_e`, occupies its own column. -/
+/-- (ii)(a) A non-incident pair `(u, e)`, `u ≠ u_e`, occupies its own column. -/
 theorem colXY_nonincident {u : U} {e : E} (hu : u ≠ H.left e) {u' : U} {e' : E}
     (h : I.colXY u e = I.colXY u' e') : u = u' ∧ e = e' := by
   have hc : I.colOuter u e (H.right e) = I.colOuter u' e' (H.right e) := by
@@ -413,7 +414,7 @@ theorem colXY_nonincident {u : U} {e : E} (hu : u ≠ H.left e) {u' : U} {e' : E
   rw [hle, hre] at h3
   omega
 
-/-- (iii)(b) A non-incident pair `(e, v)`, `v ≠ v_e`, occupies its own column. -/
+/-- (ii)(b) A non-incident pair `(e, v)`, `v ≠ v_e`, occupies its own column. -/
 theorem colYZ_nonincident {e : E} {v : V} (hv : v ≠ H.right e) {e' : E} {v' : V}
     (h : I.colYZ e v = I.colYZ e' v') : e = e' ∧ v = v' := by
   have hc : I.colOuter (H.left e) e v = I.colOuter (H.left e) e' v' := by

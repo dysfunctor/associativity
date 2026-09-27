@@ -431,9 +431,9 @@ The following lemma is straightforward, though to our knowledge it has not expli
 
 \begin{lemma}[Width transfer]
 \label{lem:width-transfer}
-Let $\Phi$ be an unsatisfiable CNF and let
+Let $\Phi$ be an unsatisfiable CNF and $F$ a set of Boolean functions. Let
 \[
-\Phi^{\mathrm{ext}}=\Phi\wedge\bigwedge_{f}\operatorname{Def}(Z_f)
+\Phi^{\mathrm{ext}}=\Phi\wedge\bigwedge_{f \in F}\operatorname{Def}(Z_f)
 \]
 be an extension of $\Phi$ with extension variables $Z_f$, where $\operatorname{Def}(Z_f)$ is a CNF expressing the constraint $Z_f=f(\vv{x}_f)$. If each tuple $\vv{x}_f$ consists of at most $\Delta$ variables of $\Phi$, then every resolution refutation of $\Phi^{\mathrm{ext}}$ has width at least $\frac{w(\Phi\vdash\bot)}{2\Delta}$.
 \end{lemma}
@@ -446,7 +446,7 @@ Since resolution is sound, in each step of $\pi^{\mathrm{ext}}$, the CNF of its 
 
 \begin{theorem}[The star-local extension remains hard]
 \label{thm:star-local-hard}
-Let $H$ be a bipartite expander given by Theorem~\ref{thm:iss-graphs}. Then $\SPM(H)$ requires resolution width $\Omega(m)$ and resolution size $2^{\Omega(m)}$.
+Let $H$ be a bipartite expander given by Theorem~\ref{thm:iss-graphs}. Then $\SPM(H)$ requires resolution proofs of size $2^{\Omega(m)}$.
 \end{theorem}
 
 \begin{proof}
@@ -693,14 +693,11 @@ g=\lceil\log(m+2)\rceil+2.
 \]
 Then there is an integer $n_0=O(m^4\log m)$ as well as maps
 \[
-i:U\to[0,n_0),\qquad j:E\to[0,n_0),\qquad k:V\to[0,n_0)
+i:U\to\N,\qquad j:E\to\N,\qquad k:V\to\N
 \]
 with the following properties.
 \begin{enumerate}[label=(\roman*)]
-\item \textbf{Distinct positions.} The maps $i$, $j$, and $k$ are injective.
-\item \textbf{Strip alignment.} For every $u\in U$, $e\in E$, and $v\in V$, the columns $\col_{\vv{xy}}(u,e)$, $\col_{\vv{yz}}(e,v)$,
-$\col_{(\vv{x}\vv{y})\vv{z}}(u,e,v)$, and $\col_{\vv{x}(\vv{y}\vv{z})}(u,e,v)$ are $g$-columns lying in
-$[0,n_0)$.
+\item \textbf{Mapping pattern.} The maps $i$, $j$, and $k$ map injectively to multiples of $g$. Moreover, $i(u)+j(e)+k(v)<n_0$ for all $u\in U$, $e\in E$, and $v\in V$.
 \item \textbf{Inner collision pattern.}
 \begin{enumerate}[label=(\alph*)]
 \item For each vertex $v\in V$ the
@@ -727,24 +724,24 @@ $k(v)-k(v_e)=k(v')-k(v_{e'})\ne0$ then $(v,v_e)=(v',v_{e'})$.
 \end{enumerate}
 \end{lemma}
 
-Before giving the proof, we describe what properties (iii) and (iv) will mean for the $g$-strips of the four multipliers under $\rho$. Property
-(iii) ensures that in the inner multipliers every $g$-column holds either the edge variables of a single star $E(u)$ or $E(v)$, or at most one edge variable $X_e$ (Figure~\ref{fig:inner-multipliers}). Since $\rho$ will fix the output of each single-star strip to the binary representation of $1$
+Before giving the proof, we describe what properties (ii) and (iii) will mean for the $g$-strips of the four multipliers under $\rho$. Property
+(ii) ensures that in the inner multipliers every $g$-column holds either the edge variables of a single star $E(u)$ or $E(v)$, or at most one edge variable $X_e$ (Figure~\ref{fig:inner-multipliers}). Since $\rho$ will fix the output of each single-star strip to the binary representation of $1$
 (Section~\ref{sec:outline-restriction}), the inner multipliers then enforce exactly the constraints
 $\operatorname{ExactOne}(X_{E(v)})$ and $\operatorname{ExactOne}(X_{E(u)})$, for $v\in V$ and $u\in U$.
 
-Property (iv) assigns each difference pair to a unique $g$-column at the same position in both outer multipliers. This serves two purposes.
-First, by (iv)(a) the partial products lying in the $g$-column for the difference pair $(0,0)$ are exactly those corresponding to incident triples
+Property (iii) assigns each difference pair to a unique $g$-column at the same position in both outer multipliers. This serves two purposes.
+First, by (iii)(a) the partial products lying in the $g$-column for the difference pair $(0,0)$ are exactly those corresponding to incident triples
 $(u_e,e,v_e)$. As
 described in Section~\ref{sec:outline-restriction}, the restriction $\rho$ forces these partial products to constants, which then forces the strip at $K$ to output $m$ in
 $(\vv{x}\vv{y})\vv{z}$ and $m+1$ in $\vv{x}(\vv{y}\vv{z})$ (Figure~\ref{fig:outer-multiplier}).
-Second, (iv)(b) ensures that each remaining outer multiplier $g$-column contains edge variables from at most one star (Figure~\ref{fig:outer-star-local}). For example, consider the case of a $g$-column corresponding to the difference pair
+Second, (iii)(b) ensures that each remaining outer multiplier $g$-column contains edge variables from at most one star (Figure~\ref{fig:outer-star-local}). For example, consider the case of a $g$-column corresponding to the difference pair
 $(d, 0)$ with $d \ne 0$. The difference $d$ is produced by a unique
 ordered pair $(u, u_e)$ with $d = i(u) - i(u_e)$, so only edge variables $X_e$ for edges $e \in E(u_e)$ can appear
 in this $g$-column. The same reasoning applies to every $g$-column corresponding to a non-$(0,0)$ difference pair.
 
 \begin{proof}
 With $M=32m^2$, let $s_0,\ldots,s_m\in[0,M)$ be the marks given by Lemma~\ref{lem:golomb}. Choose injections of $U$ and $V$ separately into these marks,
-and write $s_u$ and $s_v$ for the marks assigned to $u\in U$ and $v\in V$. To obtain condition (iv), for $e=(u_e,v_e)$ we want the outer
+and write $s_u$ and $s_v$ for the marks assigned to $u\in U$ and $v\in V$. To obtain property (iii), for $e=(u_e,v_e)$ we want the outer
 column
 \[
 \col_{(\vv{x}\vv{y})\vv{z}}(u,e,v)=i(u)+j(e)+k(v)
@@ -760,21 +757,17 @@ for all incident triples $(u,e,v)$. To this end, set
 	\label{eq:coords}
 	i(u)=gs_u,\qquad k(v)=gBs_v,\qquad j(e)=K-i(u_e)-k(v_e)
 \end{equation}
-where we choose the constant $K=2g(B+1)M$ to make $j(e)$ non-negative. Each $i(u),j(e),k(v)$ is bounded from above by $n_0:=4K$. With these
+where we choose the constant $K=2g(B+1)M$ to make $j(e)$ non-negative. Set $n_0:=4K$. With these
 parameters, $n_0=O(m^4\log m)$.
 
-\emph{Proof of (i).} The maps $i$ and $k$ are injective because the marks $s_u$ and $s_v$ are assigned injectively. For map $j$, since
+\emph{Proof of (i).} It is clear from the construction that each $i(u), j(e), k(v)$ is a multiple of $g$. The maps $i$ and $k$ are injective because the marks $s_u$ and $s_v$ are assigned injectively. For map $j$, since
 \[
 j(e)=K-g(s_{u_e}+Bs_{v_e}),
 \]
 base-$B$ uniqueness shows that $j(e)=j(e')$ implies $u_e=u_{e'}$ and $v_e=v_{e'}$, hence $e=e'$.
+Finally, $i(u)+j(e)+k(v)=K+g(s_u-s_{u_e})+gB(s_v-s_{v_e})$ exceeds $K$ by less than $g(B+1)M=K/2$, so it is less than $3K/2<n_0$.
 
-\emph{Proof of (ii).} Each $i(u), j(e), k(v)$ is a multiple of $g$. Therefore each of the columns $\col_{\vv{xy}}(u,e)$,
-$\col_{\vv{yz}}(e,v)$, $\col_{(\vv{x}\vv{y})\vv{z}}(u,e,v)$, and $\col_{\vv{x}(\vv{y}\vv{z})}(u,e,v)$ is a multiple of $g$. Furthermore,
-each column differs from $K$ by less than $g(B+1)M=K/2$, and hence lies in $(K/2,3K/2)\subset[0,n_0)$, proving (ii).
-
-
-\emph{Proof of (iii).} For the maps $i(u)$ and $j(e)$ as defined in \eqref{eq:coords}, we have
+\emph{Proof of (ii).} For the maps $i(u)$ and $j(e)$ as defined in \eqref{eq:coords}, we have
 \begin{equation}
 \label{eq:left-col}
  \col_{\vv{xy}}(u,e)= i(u) + j(e) = K-k(v_e)+g(s_u-s_{u_e}).
@@ -782,16 +775,16 @@ each column differs from $K$ by less than $g(B+1)M=K/2$, and hence lies in $(K/2
 Thus, for each $v\in V$, the incident pairs $(u_e,e)$ with $e\in E(v)$ share the column $\col_{\vv{xy}}(v):=K-k(v)$, and these columns
 are distinct for distinct $v$ because $k$ is injective. Each non-incident pair $(u,e) = (u,(u_e,v_e))$ with $u \neq u_e$ occupies its own
 column because of base-$B$ uniqueness and the fact that the difference $s_u-s_{u_e}$ is attained by a unique pair $(u, u_e)$
-(Lemma~\ref{lem:golomb}). This proves (iii)(a).
+(Lemma~\ref{lem:golomb}). This proves (ii)(a).
 
 Symmetrically,
 \begin{equation}
 \label{eq:right-col}
  \col_{\vv{yz}}(e,v)=K-i(u_e)+gB(s_v-s_{v_e}),
 \end{equation}
-and the same argument proves (iii)(b).
+and the same argument proves (ii)(b).
 
-\emph{Proof of (iv).} For the maps $i(u), j(e), k(v)$ defined in \eqref{eq:coords}, we have
+\emph{Proof of (iii).} For the maps $i(u), j(e), k(v)$ defined in \eqref{eq:coords}, we have
 \begin{align*}
 \col_{(\vv{x}\vv{y})\vv{z}}(u,e,v)&=K+\bigl(i(u)-i(u_e)\bigr)+\bigl(k(v)-k(v_e)\bigr)\\
 &=K+g(s_u-s_{u_e})+gB(s_v-s_{v_e}).
@@ -808,7 +801,7 @@ $s_u-s_{u_e}=s_{u'}-s_{u_{e'}}\ne0$, so by Lemma~\ref{lem:golomb} we must have $
 u_{e'}$. The case of a nonzero $k$-difference is symmetric.
 \end{proof}
 
-The rest of the argument uses only the four properties of Lemma~\ref{lem:indices}.
+The rest of the argument uses only the three properties of Lemma~\ref{lem:indices}.
 
 \subsection{The restriction \texorpdfstring{$\rho$}{rho}}
 \label{sec:restricted}
@@ -819,13 +812,13 @@ that it is $g$-sparse, and that it forces the outputs of the outer multipliers t
 \begin{definition}[The restriction $\rho$]
 \label{def:rho}
 Let the maps $i(u)$, $j(e)$, $k(v)$ be as in Lemma~\ref{lem:indices}, let $g=\lceil\log(m+2)\rceil+2$ be the strip width, and let $K$ be
-the column given by Lemma~\ref{lem:indices}(iv).
+the column given by Lemma~\ref{lem:indices}(iii).
 \begin{enumerate}[label=(\alph*)]
 \item \textbf{(Inputs)} For each vertex $u\in U$ and $v\in V$, the restriction $\rho$ sets
 $x_{i(u)}=1$ and $z_{k(v)}=1$. For each edge $e\in E$, $\rho$ leaves the bit $y_{j(e)}$
 unset and identifies it with the edge variable $X_e$; it restricts all
 remaining bits of $\vv{x}$, $\vv{y}$, and $\vv{z}$ to $0$.
-\item \textbf{(Inner multiplier outputs)} Recall that Lemma~\ref{lem:indices}(iii) provides well-defined and injective column maps
+\item \textbf{(Inner multiplier outputs)} Recall that Lemma~\ref{lem:indices}(ii) provides well-defined and injective column maps
 $\col_{\vv{xy}}(v)$ for $v\in V$ and $\col_{\vv{yz}}(u)$ for $u\in U$.
 For each $v\in V$, the restriction $\rho$ fixes the output of the $g$-strip of $\vv{x}\vv{y}$ with base $\col_{\vv{xy}}(v)$ to the binary representation of
 $1$ ($\rho$ sets the output bit in column $\col_{\vv{xy}}(v)$ to $1$ and the other $g-1$ output bits to $0$), and for each $u\in U$, it
@@ -855,7 +848,7 @@ $\col_{\vv{yz}}(u)$, $u\in U$.
 \begin{proof}
 (i) Consider the inner multiplier $\vv{x}\vv{y}$. A partial product $x_iy_j$ is not forced to $0$ by the restriction $\rho$ if and only if $x_i$ is
 set to $1$ and $y_j$ is not set to $0$, that is, $i=i(u)$ and $j=j(e)$ for some $u\in U$ and $e\in E$. The partial product then computes
-$x_{i(u)}y_{j(e)}=X_e$ and lies in column $\col_{\vv{xy}}(u,e)$, which is a $g$-column by Lemma~\ref{lem:indices}(ii). By Lemma~\ref{lem:indices}(iii)(a), the pairs $(u,e)$ with $\col_{\vv{xy}}(u,e)=\col_{\vv{xy}}(v)$ are exactly the incident pairs
+$x_{i(u)}y_{j(e)}=X_e$ and lies in column $\col_{\vv{xy}}(u,e)$, which is a $g$-column by Lemma~\ref{lem:indices}(i). By Lemma~\ref{lem:indices}(ii)(a), the pairs $(u,e)$ with $\col_{\vv{xy}}(u,e)=\col_{\vv{xy}}(v)$ are exactly the incident pairs
 $(u_e,e)$ with $e\in E(v)$, while every non-incident pair occupies a $g$-column of its own. Hence the $g$-column $\col_{\vv{xy}}(v)$ contains exactly the partial products $X_e$, $e\in E(v)$, and every other $g$-column contains at
 most one partial product $X_e$. The argument for $\vv{y}\vv{z}$ is symmetric.
 
@@ -863,10 +856,9 @@ most one partial product $X_e$. The argument for $\vv{y}\vv{z}$ is symmetric.
 not forced to $0$ lie in $g$-columns, with at most $m+1$ such partial products per $g$-column. For the
 inner multipliers this follows from (i), since every star of $H$ has at most $m+1$ edges.
 
-The only input bits of the outer multiplier $(\vv{x}\vv{y})\vv{z}$ not set to $0$ by $\rho$ are the bits $z_{k(v)}$ and the
-output bits of $\vv{x}\vv{y}$ at the columns $\col_{\vv{xy}}(u,e)$ (fixed to $1$ for incident pairs $(u,e)$ and unset otherwise), so every partial
-product of $(\vv{x}\vv{y})\vv{z}$ not forced to $0$ lies at a column $\col_{\vv{xy}}(u,e)+k(v)=\col_{(\vv{x}\vv{y})\vv{z}}(u,e,v)$, which is a $g$-column by
-Lemma~\ref{lem:indices}(ii). Inside a given column of $(\vv{x}\vv{y})\vv{z}$, distinct partial products have distinct factors $z_{k(v)}$ and hence correspond to distinct $v\in V$. So each $g$-column contains at most $|V|=m$ partial products not forced to $0$. The same holds for the $g$-columns of
+Now consider the outer multiplier $(\vv{x}\vv{y})\vv{z}$. The restriction $\rho$ sets each of the bits in $\vv{z}$ to $0$ except for the bits $z_{k(v)}$, and sets each of the bits in $\vv{x}\vv{y}$ to $0$ except for those at the columns $\col_{\vv{xy}}(u,e)$. So every partial
+product of $(\vv{x}\vv{y})\vv{z}$ not forced to $0$ lies in a column of the form $\col_{\vv{xy}}(u,e)+k(v)=\col_{(\vv{x}\vv{y})\vv{z}}(u,e,v)$. This is a $g$-column by
+Lemma~\ref{lem:indices}(i). Within a given column of $(\vv{x}\vv{y})\vv{z}$, distinct partial products have distinct factors $z_{k(v)}$ and hence correspond to distinct $v\in V$, by injectivity of $k(v)$ (Lemma~\ref{lem:indices}(i)). So each $g$-column contains at most $|V|=m$ partial products not forced to $0$. The same holds for the $g$-columns of
 $\vv{x}(\vv{y}\vv{z})$ with the $m+1$ vertices $u \in U$.
 \end{proof}
 
@@ -877,7 +869,7 @@ Under the restriction $\rho$, the outer multiplier strips at base $K$ are forced
 \begin{proof}
 We claim that the $g$-column $K$ of multiplier $(\vv{x}\vv{y})\vv{z}$ contains exactly $m$ ones, one for each $v\in V$. Indeed, for each $v\in V$, the restriction $\rho$ sets the output bit of $\vv{x}\vv{y}$ at $\col_{\vv{xy}}(v)$ and the input bit
 $z_{k(v)}$ to $1$. Their product is a partial product lying in column $\col_{\vv{xy}}(v)+k(v)=K$, and by
-Lemma~\ref{lem:indices}(iii),(iv) it is the only partial product in column $K$ containing $z_{k(v)}$. Every other
+Lemma~\ref{lem:indices}(ii),(iii) it is the only partial product in column $K$ containing $z_{k(v)}$. Every other
 partial product in column $K$ is forced to $0$, since $\rho$ restricts every other bit of $\vv{z}$ to $0$. By Lemma~\ref{lem:rho-g-sparse}(ii), $\rho$ is a $g$-sparse restriction of the inputs of multiplier $(\vv{x}\vv{y})\vv{z}$, hence Observation~\ref{obs:strip-counts} applies and the strip at base $K$ is forced to output the binary
 representation of $m$ (see Figure~\ref{fig:outer-multiplier}). Symmetrically, column $K$ of the multiplier $\vv{x}(\vv{y}\vv{z})$ contains a $1$ for each $u\in U$, so its strip at base $K$ is forced to output the binary representation of $m+1$. Since $m$ and $m+1$ disagree in their least significant bit, the output bits at column $K$ disagree.
 \end{proof}
@@ -928,18 +920,18 @@ strip's base column. The statement then follows for the inner multipliers $\vv{x
 For the outer multipliers, each of their input bits is either constant or computes a single edge variable $X_e$. Consider, for example, the multiplier $(\vv{x}\vv{y})\vv{z}$. Its input bits $\vv{z}$ are all set to constants by $\rho$. In the other input bit-vector $(\vv{x}\vv{y})$, each unrestricted bit is the base output bit of an inner multiplier strip holding a single partial product
 $X_e$ (Definition~\ref{def:rho}(b), Lemma~\ref{lem:rho-g-sparse}(i)). By Observation~\ref{obs:strip-counts} this output bit computes $X_e$.
 
-By Definition~\ref{def:rho}(a),(b), the partial products not forced to $0$ in either outer multiplier are indexed by triples $(u,e,v) \in U \times E \times V$. By Lemma~\ref{lem:indices}(iv), the column of such a partial product depends only on its difference pair
+By Definition~\ref{def:rho}(a),(b), the partial products not forced to $0$ in either outer multiplier are indexed by triples $(u,e,v) \in U \times E \times V$. By Lemma~\ref{lem:indices}(iii), the column of such a partial product depends only on its difference pair
 $\bigl(i(u)-i(u_e),\,k(v)-k(v_e)\bigr)$, and each nonzero difference is realized by a unique ordered pair of vertices from $U$ or $V$.
 There are therefore four kinds of outer $g$-columns to check, according to which entries of the difference pair are $0$ (Figures~\ref{fig:outer-multiplier} and~\ref{fig:outer-star-local}). It suffices to show that each kind of column only contains edge variables from at most one star.
 \begin{itemize}
-\item \textbf{Difference pair $(0,0)$.} By Lemma~\ref{lem:indices}(iv)(a), this is the $g$-column $K$, which contains only constant
+\item \textbf{Difference pair $(0,0)$.} By Lemma~\ref{lem:indices}(iii)(a), this is the $g$-column $K$, which contains only constant
 partial products.
-\item \textbf{Difference pair $(d,0)$ with $d\ne0$.} By Lemma~\ref{lem:indices}(iv)(b), we have $d=i(u)-i(u_e)$ for a unique ordered pair
+\item \textbf{Difference pair $(d,0)$ with $d\ne0$.} By Lemma~\ref{lem:indices}(iii)(b), we have $d=i(u)-i(u_e)$ for a unique ordered pair
 $(u,u_e)$, so the triples mapping to this column are $(u,e,v_e)$ with $e\in E(u_e)$. In the outer multiplier $(\vv{x}\vv{y})\vv{z}$,
 this column therefore contains exactly the edge variables from the single star $E(u_e)$. In $\vv{x}(\vv{y}\vv{z})$, the only partial product of this column not forced to $0$ is the product of the input bit $x_{i(u)}$
 with the output bit of $\vv{y}\vv{z}$ at $\col_{\vv{yz}}(u_e)$, and $\rho$ sets both bits to $1$.
 \item \textbf{Difference pair $(0,d)$ with $d\ne0$.} Symmetrically, in the multiplier $\vv{x}(\vv{y}\vv{z})$ this column contains exactly the edge variables from the single star $E(v_e)$, while in the multiplier $(\vv{x}\vv{y})\vv{z}$ the only partial product not forced to $0$ in this column is the constant $1$.
-\item \textbf{Both differences nonzero.} By Lemma~\ref{lem:indices}(iv)(b), the two differences determine ordered pairs $(u,u')$ and $(v,v')$,
+\item \textbf{Both differences nonzero.} By Lemma~\ref{lem:indices}(iii)(b), the two differences determine ordered pairs $(u,u')$ and $(v,v')$,
 so every triple mapping to this column has the form $(u,e,v)$ with $e=(u',v')$. If the graph $H$ contains the edge $(u',v')$, then in both outer multipliers this column contains the single edge variable $X_{(u',v')}$. Otherwise the column contains no edge variables.
 \end{itemize}
 
