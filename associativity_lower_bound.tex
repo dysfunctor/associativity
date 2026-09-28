@@ -100,7 +100,7 @@ Meanwhile, the practical workarounds described above are incomplete, and when th
 For associativity of multiplication, we show that such small proofs do not exist. In particular, we prove an exponential general resolution lower bound for multiplier associativity, resolving a problem left open by Beame and Liew~\cite{beame-liew}. This is the first resolution lower bound for formulas involving multiplication that holds without restricting the order in which variables are resolved. Prior to this result, no such lower bound was known even for tree-like or regular resolution.
 
 \begin{informalmain}
-Let $\Assoc_n$ be the \emph{miter} formula asserting $(\vv{x}\vv{y})\vv{z}\ne\vv{x}(\vv{y}\vv{z})$ for $n$-bit input bit-vectors $\vv{x},\vv{y},\vv{z}$, with multiplication encoded by an array or Wallace-tree multiplier. Then resolution refutations of $\Assoc_n$ require size
+Let $\Assoc_n$ be the CNF formula asserting $(\vv{x}\vv{y})\vv{z}\ne\vv{x}(\vv{y}\vv{z})$ for $n$-bit input bit-vectors $\vv{x},\vv{y},\vv{z}$, with multiplication encoded by an array or Wallace-tree multiplier. Then resolution refutations of $\Assoc_n$ require size
 $
 2^{\Omega((n/\log n)^{1/4})}.
 $
@@ -250,10 +250,9 @@ set is an endpoint of an edge in the matching.
 \section{The associativity formula}
 \label{sec:assoc-formula}
 
-The associativity formula $\Assoc_n$ is a miter circuit containing four multipliers, parameterized by the
-choice of an exact multiplier encoding (Definition~\ref{def:exact-encoding}).
+The associativity formula $\Assoc_n$ contains a circuit of two multipliers outputting $(\vv{x}\vv{y})\vv{z}$, a separate circuit of two multipliers outputting $\vv{x}(\vv{y}\vv{z})$, and a \emph{miter circuit}~\cite{brand93} which asserts that these two outputs disagree.\footnote{The term presumably comes from the shape of the construction: two circuits converging on an XOR gate resemble a bishop's miter, as illustrated by Biere~\cite[slide~36]{biere-fields}.}
 
-\begin{definition}[Associativity miter]
+\begin{definition}[Associativity formula]
 \label{def:assoc}
 Let $\Mul_n$ be an exact multiplier encoding. The unsatisfiable formula $\Assoc_n$, shown in Figure~\ref{fig:assoc-miter}, consists of the four multiplier encodings
 \[
@@ -262,11 +261,14 @@ Let $\Mul_n$ be an exact multiplier encoding. The unsatisfiable formula $\Assoc_
 \[
 \Mul_{2n}(\vv{x}\vv{y},\vv{z};(\vv{x}\vv{y})\vv{z}),\qquad \Mul_{2n}(\vv{x},\vv{y}\vv{z};\vv{x}(\vv{y}\vv{z})),
 \]
-the miter variables
+along with \emph{miter variables} $e_i$ and \emph{miter clauses} encoding the constraints
 \[
 e_i\leftrightarrow \bigl(((\vv{x}\vv{y})\vv{z})_i\oplus(\vv{x}(\vv{y}\vv{z}))_i\bigr),\qquad 0\le i<4n,
 \]
-and the clause $e_0\vee\cdots\vee e_{4n-1}$. Here the outputs of the inner multipliers, $\vv{x}\vv{y}$ and $\vv{y}\vv{z}$, have $2n$ bits, the $n$-bit inputs $\vv{x}$ and $\vv{z}$ to the outer multipliers are zero-padded to $2n$ bits, and the outer multiplier outputs $(\vv{x}\vv{y})\vv{z}$ and $\vv{x}(\vv{y}\vv{z})$ have $4n$ bits.
+\[
+e_0\vee\cdots\vee e_{4n-1}.
+\]
+Here the outputs of the inner multipliers, $\vv{x}\vv{y}$ and $\vv{y}\vv{z}$, have $2n$ bits, the $n$-bit inputs $\vv{x}$ and $\vv{z}$ to the outer multipliers are zero-padded to $2n$ bits, and the outputs of the outer multipliers $(\vv{x}\vv{y})\vv{z}$ and $\vv{x}(\vv{y}\vv{z})$ have $4n$ bits.
 
 We refer to $\vv{x}\vv{y}$ and $\vv{y}\vv{z}$ as the
 \emph{inner} multipliers and $(\vv{x}\vv{y})\vv{z}$ and $\vv{x}(\vv{y}\vv{z})$ as the \emph{outer} multipliers.
@@ -279,7 +281,7 @@ truncated multipliers (see Remark~\ref{rem:truncated}).
 \centering
 \includegraphics[width=0.9\textwidth]{Diagrams/associativity-formula.png}
 \caption{The associativity instance $\Assoc_n$. The two inner multipliers $\Mul_n$ compute $\vv{x}\vv{y}$ and $\vv{y}\vv{z}$, the two outer
-multipliers $\Mul_{2n}$ compute $(\vv{x}\vv{y})\vv{z}$ and $\vv{x}(\vv{y}\vv{z})$, and the miter variables $e_i$, with the clause $e_0\vee\cdots\vee e_{4n-1}$, assert that $(\vv{x}\vv{y})\vv{z} \neq \vv{x}(\vv{y}\vv{z})$.}
+multipliers $\Mul_{2n}$ compute $(\vv{x}\vv{y})\vv{z}$ and $\vv{x}(\vv{y}\vv{z})$, and the miter variables $e_i$, with the long miter clause $e_0\vee\cdots\vee e_{4n-1}$, assert that $(\vv{x}\vv{y})\vv{z} \neq \vv{x}(\vv{y}\vv{z})$.}
 \label{fig:assoc-miter}
 \end{figure}
 
@@ -446,7 +448,7 @@ Since resolution is sound, in each step of $\pi^{\mathrm{ext}}$, the CNF of its 
 
 \begin{theorem}[The star-local extension remains hard]
 \label{thm:star-local-hard}
-Let $H$ be a bipartite expander given by Theorem~\ref{thm:iss-graphs}. Then $\SPM(H)$ requires resolution proofs of size $2^{\Omega(m)}$.
+Let $H$ be a bipartite expander given by Theorem~\ref{thm:iss-graphs}. Then $\SPM(H)$ requires resolution refutations of size $2^{\Omega(m)}$.
 \end{theorem}
 
 \begin{proof}
@@ -495,7 +497,7 @@ three steps.
 \item \textbf{(Restrict)} We construct a restriction $\rho$ that leaves one input bit of $\vv{y}$ unset for each edge $e\in E$ and
 identifies it with the perfect-matching edge variable $X_e$. It sets the remaining input bits of $\vv{x}, \vv{y}, \vv{z}$ to constants $0$ or
 $1$. The restriction $\rho$ also sets some of the output bits of the multipliers $\vv{x}\vv{y}$ and $\vv{y}\vv{z}$, and it sets one of the
-miter bits $e_K=1$ at a fixed position $K$, satisfying the miter clause $e_0\vee\cdots\vee e_{4n-1}$.
+miter variables $e_K=1$ at a fixed position $K$, satisfying the long miter clause $e_0\vee\cdots\vee e_{4n-1}$.
 
 Under the restriction $\rho$, the two
 inner multipliers of $\Assoc_n$ become encodings, with auxiliary variables, of the
@@ -538,7 +540,7 @@ We will define a $g$-sparse restriction $\rho$ in terms of three maps. We map ea
 \in V$ to a $\vv{z}$-bit-position $k(v)$. For each vertex $u \in U$ and $v \in V$, the restriction $\rho$ sets $x_{i(u)} = 1$ and $z_{k(v)}
 = 1$. For each edge $e \in E$, the restriction $\rho$ leaves $y_{j(e)}$ unrestricted and identifies it with the edge variable $X_e$. It
 restricts all remaining bits of $\vv{x}$, $\vv{y}$, and $\vv{z}$ to $0$. Additionally, $\rho$ restricts some of the output bits of the
-inner multipliers $\vv{x}\vv{y}$ and $\vv{y}\vv{z}$, together with one miter bit, as we will specify below.
+inner multipliers $\vv{x}\vv{y}$ and $\vv{y}\vv{z}$, together with one miter variable, as we will specify below.
 
 Lemma~\ref{lem:indices} constructs the maps $i(u)$, $j(e)$, $k(v)$ with special collision properties.
 In this outline we will use the fact that for an edge
@@ -607,7 +609,7 @@ $\vv{x}(\vv{y}\vv{z})$, the same $g$-strip outputs $m+1$.}
 \label{fig:outer-multiplier}
 \end{figure}
 
-This means that the outer multipliers disagree on their $K$-th output bit, so $\rho$ sets the miter bit $e_K = 1$ to satisfy the
+This means that the outer multipliers disagree on their $K$-th output bit, so $\rho$ sets the miter variable $e_K = 1$ to satisfy the long
 miter clause $e_0 \vee \cdots \vee e_{4n-1}$. This completes the description of $\rho$.
 
 \item \textbf{(Other $g$-columns)} Under $\rho$, in all four multipliers the
@@ -826,7 +828,7 @@ fixes the output of the $g$-strip of $\vv{y}\vv{z}$ with base $\col_{\vv{yz}}(u)
 $u\ne u_e$, and sets every other output
 bit of $\vv{x}\vv{y}$ to $0$. Symmetrically, $\rho$ leaves the output bit in column
 $\col_{\vv{yz}}(e,v)$ unset for each non-incident pair $(e,v)$ where $v\ne v_e$, and sets every other output bit of $\vv{y}\vv{z}$ to $0$.
-\item \textbf{(Miter)} The restriction $\rho$ sets the miter bit $e_K=1$.
+\item \textbf{(Miter)} The restriction $\rho$ sets the miter variable $e_K=1$.
 \end{enumerate}
 \end{definition}
 
@@ -1003,7 +1005,7 @@ vertex star $E(w)$, and maps to the extension variable $Z_{w,f}$. Note that any 
 identified with a single $\SPM(H)$ literal. By the substitution lemma (Lemma~\ref{lem:substitution}), the refutation of $\Assoc_n\!\upharpoonright_\rho$ yields a refutation of
 $(\Assoc_n\!\upharpoonright_\rho)^\sigma$ of size at most $s$.
 
-It remains to derive the clauses of the restricted, substituted formula $(\Assoc_n\!\upharpoonright_\rho)^\sigma$ from $\SPM(H)$. Each clause $C^\sigma$ of $(\Assoc_n\!\upharpoonright_\rho)^\sigma$ is the result of applying the substitution $\sigma$ to a clause $C$ of the restricted formula $\Assoc_n\!\upharpoonright_\rho$. The clause $C$ has constant width: all clauses of $\Assoc_n$ have constant width except the miter clause $e_0\vee\cdots\vee e_{4n-1}$, which $\rho$ satisfies. By Lemma~\ref{lem:locality}, each variable of $C$ depends on the edge variables of at most one star, so $\supp(C)$ has constant size. We claim that the clauses $\operatorname{ExactOne}(X_{E(w)})$ and $\operatorname{Def}(Z_{w,f})$ for $w\in \supp(C)$ imply $C^\sigma$. Indeed, let $\alpha$ be an assignment to the variables of $\SPM(H)$ that satisfies these clauses. By Lemma~\ref{lem:local-soundness}, the propagated assignment $\bar\alpha$ (Definition~\ref{def:propagation}) satisfies $C$. Furthermore, the definitions $\operatorname{Def}(Z_{w,f})$ ensure that the substituted values agree with the propagated values, i.e. $\alpha(\sigma(q))=\bar\alpha(q)$ for every variable $q$ of $C$. Hence, $\alpha$ satisfies $C^\sigma$. By Lemma~\ref{lem:star-local-derivations}, some subclause of $C^\sigma$ therefore has a constant-size derivation from $\SPM(H)$. Applying the refutation of $(\Assoc_n\!\upharpoonright_\rho)^\sigma$ to these subclauses gives a refutation of $\SPM(H)$ of size $O(s)$.
+It remains to derive the clauses of the restricted, substituted formula $(\Assoc_n\!\upharpoonright_\rho)^\sigma$ from $\SPM(H)$. Each clause $C^\sigma$ of $(\Assoc_n\!\upharpoonright_\rho)^\sigma$ is the result of applying the substitution $\sigma$ to a clause $C$ of the restricted formula $\Assoc_n\!\upharpoonright_\rho$. The clause $C$ has constant width: all clauses of $\Assoc_n$ have constant width except the long miter clause $e_0\vee\cdots\vee e_{4n-1}$, which $\rho$ satisfies. By Lemma~\ref{lem:locality}, each variable of $C$ depends on the edge variables of at most one star, so $\supp(C)$ has constant size. We claim that the clauses $\operatorname{ExactOne}(X_{E(w)})$ and $\operatorname{Def}(Z_{w,f})$ for $w\in \supp(C)$ imply $C^\sigma$. Indeed, let $\alpha$ be an assignment to the variables of $\SPM(H)$ that satisfies these clauses. By Lemma~\ref{lem:local-soundness}, the propagated assignment $\bar\alpha$ (Definition~\ref{def:propagation}) satisfies $C$. Furthermore, the definitions $\operatorname{Def}(Z_{w,f})$ ensure that the substituted values agree with the propagated values, i.e. $\alpha(\sigma(q))=\bar\alpha(q)$ for every variable $q$ of $C$. Hence, $\alpha$ satisfies $C^\sigma$. By Lemma~\ref{lem:star-local-derivations}, some subclause of $C^\sigma$ therefore has a constant-size derivation from $\SPM(H)$. Applying the refutation of $(\Assoc_n\!\upharpoonright_\rho)^\sigma$ to these subclauses gives a refutation of $\SPM(H)$ of size $O(s)$.
 \end{proof}
 
 \begin{theorem}[Lower bound for multiplier associativity]
@@ -1031,7 +1033,7 @@ By Lemma~\ref{lem:reduction}, a refutation of $\Assoc_n$ of size $s$ gives a ref
 The above lower bound, as well as the bounded-depth Frege lower bound we will prove in Section~\ref{sec:frege}, apply unchanged to associativity of truncated multiplication, where each multiplier outputs only the $n$ low-order bits of
 the product and the miter compares $n$ bits. The construction places the
 input positions $i(u), j(e), k(v)$, the restricted strip columns, and the
-miter bit $e_K$ all below $n_0 \le n$. So under $\rho$, every partial product
+miter variable $e_K$ all below $n_0 \le n$. So under $\rho$, every partial product
 not forced to $0$ lies in a column below $n_0$.
 \end{remark}
 
@@ -1111,14 +1113,14 @@ There are constants $d_0$ and $s_0$ such that for every $d$, if $\pi$ is a depth
 This reduction follows the same three steps as the resolution reduction (Lemma~\ref{lem:reduction}). The main difference is that here, in order to use Lemma~\ref{lem:frege-substitution}, we apply $\rho$ as a formula substitution, which does not simplify away constants as a restriction would (otherwise an inference may become invalid). In order to reuse the lemmas from Section~\ref{sec:reduction}, we will therefore need to derive the formulas of $\Assoc_n^\rho$ (where $\rho$ is applied as a formula substitution) from the clauses of $\Assoc_n\!\upharpoonright_\rho$ (where $\rho$ is applied as a restriction). The substitution and local-derivation steps are essentially unchanged, except that formulas take the place of extension variables.
 
 \emph{Application of $\rho$.} 
-Let $\pi$ be a depth $d$ Frege refutation of $\Assoc_n$ of size $s$. By Lemma~\ref{lem:frege-substitution}, applying $\rho$ as a formula substitution gives a depth $d+O(1)$, size $O(s)$ refutation $\pi^\rho$ of $\Assoc_n^\rho$. Aside from the miter clause $e_0\vee\cdots\vee e_{4n-1}$, each clause $C^\rho$ of $\Assoc_n^\rho$ has constant size, and hence has a derivation of constant depth and size (Lemma~\ref{lem:frege-local-derivations}) from its counterpart $C\!\upharpoonright_\rho$ in $\Assoc_n\!\upharpoonright_\rho$ (if the clause $C$ is satisfied by $\rho$ then we instead derive $C^\rho$ by weakening from $\neg\bot$). The miter clause after applying the formula substitution $\rho$ becomes $e_0\vee\cdots\vee e_{K-1} \vee \neg \bot \vee e_{K+1} \vee \cdots \vee e_{4n-1}$. We derive this in constant depth and size $O(n)$ as follows: fix a constant-size derivation of $p \vee q$ from $p$, then substitute $\neg \bot$ for $p$ and $e_0\vee\cdots\vee e_{K-1} \vee e_{K+1} \vee \cdots \vee e_{4n-1}$ for $q$.
+Let $\pi$ be a depth $d$ Frege refutation of $\Assoc_n$ of size $s$. By Lemma~\ref{lem:frege-substitution}, applying $\rho$ as a formula substitution gives a depth $d+O(1)$, size $O(s)$ refutation $\pi^\rho$ of $\Assoc_n^\rho$. Aside from the long miter clause $e_0\vee\cdots\vee e_{4n-1}$, each clause $C^\rho$ of $\Assoc_n^\rho$ has constant size, and hence has a derivation of constant depth and size (Lemma~\ref{lem:frege-local-derivations}) from its counterpart $C\!\upharpoonright_\rho$ in $\Assoc_n\!\upharpoonright_\rho$ (if the clause $C$ is satisfied by $\rho$ then we instead derive $C^\rho$ by weakening from $\neg\bot$). The long miter clause after applying the formula substitution $\rho$ becomes $e_0\vee\cdots\vee e_{K-1} \vee \neg \bot \vee e_{K+1} \vee \cdots \vee e_{4n-1}$. We derive this in constant depth and size $O(n)$ as follows: fix a constant-size derivation of $p \vee q$ from $p$, then substitute $\neg \bot$ for $p$ and $e_0\vee\cdots\vee e_{K-1} \vee e_{K+1} \vee \cdots \vee e_{4n-1}$ for $q$.
 
 Prepending these derivations to $\pi^\rho$ gives a refutation $\pi\!\upharpoonright_\rho$ of $\Assoc_n\!\upharpoonright_\rho$ of depth $d+O(1)$ and size $O(s)$.
 
 \emph{DNF substitution.} By Lemma~\ref{lem:locality}, every variable of $\Assoc_n\!\upharpoonright_\rho$ is an edge variable or a wire that is constant, edge-local, or star-local. Define a formula substitution $\sigma$ accordingly: an edge variable $X_e$ maps to itself; a constant wire maps to the corresponding value $\neg\bot$ or $\bot$; an edge-local wire maps to the corresponding literal $X_e$ or $\neg X_e$; and a wire that is star-local at $w$ and computes $f(X_{E(w)})$ maps to the canonical DNF of $f$, which has depth at most $3$ and constant size. Then $\sigma$ is a substitution with depth at most $3$ and constant size. By Lemma~\ref{lem:frege-substitution}, $(\pi\!\upharpoonright_\rho)^\sigma$ is a depth $d+O(1)$, size $O(s)$ refutation of $(\Assoc_n\!\upharpoonright_\rho)^\sigma$.
 
 \emph{Local derivations.} 
-It remains to derive the formulas of $(\Assoc_n\!\upharpoonright_\rho)^\sigma$ from $\PM(H)$. Each such formula is $C^\sigma$ for a clause $C$ of $\Assoc_n\!\upharpoonright_\rho$. The clause $C$ has constant width, since $\rho$ satisfies the miter clause, and by Lemma~\ref{lem:locality} each variable of $C$ depends on the edge variables of at most one star, so $\supp(C)$ has constant size. We claim that the clauses $\operatorname{ExactOne}(X_{E(w)})$ for $w\in\supp(C)$ imply $C^\sigma$. Indeed, let $\alpha$ be an assignment to the edge variables that satisfies these clauses. By Lemma~\ref{lem:local-soundness}, the propagated assignment $\bar\alpha$ (Definition~\ref{def:propagation}) satisfies the clause $C$. Furthermore, $\sigma$ maps each variable $q$ of clause $C$ to a formula computing its Boolean function, so the substituted values agree with the propagated values, i.e. $\alpha(\sigma(q))=\bar\alpha(q)$. Hence $\alpha$ satisfies $C^\sigma$. By Lemma~\ref{lem:frege-local-derivations}, the formula $C^\sigma$ therefore has a constant-depth, constant-size derivation from $\PM(H)$. Applying the refutation $(\pi\!\upharpoonright_\rho)^\sigma$ of $(\Assoc_n\!\upharpoonright_\rho)^\sigma$ to these derived formulas gives a refutation of $\PM(H)$ with depth $d+O(1)$ and size $O(s)$.
+It remains to derive the formulas of $(\Assoc_n\!\upharpoonright_\rho)^\sigma$ from $\PM(H)$. Each such formula is $C^\sigma$ for a clause $C$ of $\Assoc_n\!\upharpoonright_\rho$. The clause $C$ has constant width, since $\rho$ satisfies the long miter clause, and by Lemma~\ref{lem:locality} each variable of $C$ depends on the edge variables of at most one star, so $\supp(C)$ has constant size. We claim that the clauses $\operatorname{ExactOne}(X_{E(w)})$ for $w\in\supp(C)$ imply $C^\sigma$. Indeed, let $\alpha$ be an assignment to the edge variables that satisfies these clauses. By Lemma~\ref{lem:local-soundness}, the propagated assignment $\bar\alpha$ (Definition~\ref{def:propagation}) satisfies the clause $C$. Furthermore, $\sigma$ maps each variable $q$ of clause $C$ to a formula computing its Boolean function, so the substituted values agree with the propagated values, i.e. $\alpha(\sigma(q))=\bar\alpha(q)$. Hence $\alpha$ satisfies $C^\sigma$. By Lemma~\ref{lem:frege-local-derivations}, the formula $C^\sigma$ therefore has a constant-depth, constant-size derivation from $\PM(H)$. Applying the refutation $(\pi\!\upharpoonright_\rho)^\sigma$ of $(\Assoc_n\!\upharpoonright_\rho)^\sigma$ to these derived formulas gives a refutation of $\PM(H)$ with depth $d+O(1)$ and size $O(s)$.
 \end{proof}
 
 \begin{theorem}[Bounded-depth Frege lower bound]
