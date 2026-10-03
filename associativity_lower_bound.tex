@@ -1,7 +1,7 @@
 \ifdefined\XeTeXversion\else\pdfoutput=1\fi
 \documentclass[11pt]{article}
 
-\usepackage[letterpaper,margin=0.85in]{geometry}
+\usepackage[letterpaper,margin=1in]{geometry}
 \usepackage{amsmath,amssymb,amsthm,mathtools}
 \usepackage{thmtools}
 \usepackage{microtype}
@@ -57,6 +57,7 @@
 % arXiv categories: cs.CC (primary), cs.LO (cross-list)
 
 \begin{document}
+\pagenumbering{roman}
 \maketitle
 
 \begin{abstract}
@@ -66,11 +67,14 @@ We give the first lower bound of this kind by showing that general resolution pr
 encodings based on partial product summation, including the standard array and Wallace-tree multipliers used to bit-blast multiplication
 in SMT solvers. This result resolves an open problem of Beame and Liew.
 
-The proof constructs a reduction from a perfect-matching principle on bounded-degree bipartite expander graphs to multiplier associativity. Itsykson et al.\ proved that this principle is hard for resolution. The lower bound
+The proof constructs a reduction from a perfect-matching principle on bounded-degree bipartite expander graphs to multiplier associativity. Itsykson, Slabodkin, and Sokolov proved that this principle is hard for resolution. The lower bound
 for multiplier associativity follows.
 
 The same reduction, when combined with H\r{a}stad's recent lower bound for the perfect-matching principle of the odd grid, yields an exponential lower bound for multiplier associativity in the stronger bounded-depth Frege proof systems.
 \end{abstract}
+\thispagestyle{empty}
+\newpage
+\pagenumbering{arabic}
 
 \section{Introduction}
 \label{sec:intro}
@@ -97,7 +101,7 @@ Beame and Liew gave a surprising negative answer to this conjecture for the case
 
 Meanwhile, the practical workarounds described above are incomplete, and when they fail, every major solver still falls back to bit-blasting. Moreover, this retreat from CDCL has rested entirely on empirical grounds. Without proven lower bounds, the possibility has remained that these workarounds are unnecessary. Perhaps resolution proofs of practical size exist for these problems, and current CDCL solvers simply lack the heuristics to find them.
 
-For associativity of multiplication, we show that such small proofs do not exist. In particular, we prove an exponential general resolution lower bound for multiplier associativity, resolving a problem left open by Beame and Liew~\cite{beame-liew}. This is the first resolution lower bound for formulas involving multiplication that holds without restricting the order in which variables are resolved. Prior to this result, no such lower bound was known even for tree-like or regular resolution.
+For associativity of multiplication, we show that such small proofs do not exist. In particular, we prove an exponential general resolution lower bound for multiplier associativity, resolving a problem left open by Beame and Liew~\cite{beame-liew}. This is the first resolution lower bound for a natural formula involving multiplication that holds without restricting the order in which variables are resolved. Prior to this result, no such lower bound was known even for tree-like or regular resolution.
 
 \begin{informalmain}
 Let $\Assoc_n$ be the CNF formula asserting $(\vv{x}\vv{y})\vv{z}\ne\vv{x}(\vv{y}\vv{z})$ for $n$-bit input bit-vectors $\vv{x},\vv{y},\vv{z}$, with multiplication encoded by an array or Wallace-tree multiplier. Then resolution refutations of $\Assoc_n$ require size
@@ -108,7 +112,7 @@ $
 
 This lower bound is not specific to these two multiplier architectures. It applies to a general class of \emph{strip-local} multiplier encodings, defined in Section~\ref{sec:strip-local}, which captures most of the standard multipliers used for bit-blasting.
 
-We prove the lower bound by constructing a reduction from the perfect-matching principle on bounded-degree bipartite graphs. The reduction reveals a perfect matching instance embedded inside the associativity formula: we fix $\vv{x}$ and $\vv{z}$ to sparse bit-vectors whose nonzero positions represent the vertices of the graph, and leave selected bits of $\vv{y}$ free to serve as edge variables. We use the bipartite expanders of Itsykson et al.~\cite{iss,ioss}, who proved that this principle on these graphs is hard for resolution. To absorb the auxiliary circuit variables of the multiplier encodings, we extend the perfect-matching principle to a \emph{star-local} variant and show that it remains hard for resolution.
+We prove the lower bound by constructing a reduction from the perfect-matching principle on bounded-degree bipartite graphs. The reduction reveals a perfect matching instance embedded inside the associativity formula: we fix $\vv{x}$ and $\vv{z}$ to sparse bit-vectors whose nonzero positions represent the vertices of the graph, and leave selected bits of $\vv{y}$ free to serve as edge variables. We use the bipartite expanders of Itsykson, Slabodkin, and Sokolov~\cite{iss} (see also~\cite{ioss}), who proved that this principle on these graphs is hard for resolution. In order to absorb the auxiliary circuit variables of the multiplier encodings, we extend the perfect-matching principle to a \emph{star-local} variant and show that it remains hard for resolution.
 
 Our second result concerns the stronger bounded-depth Frege proof systems, where the lines of a proof are bounded-depth formulas rather than clauses. H\r{a}stad recently proved that the perfect-matching principle of the odd grid is hard for these systems~\cite{hastad-php}. By applying the same reduction as before, with the odd grid in place of the expander, we get the following lower bound.
 
@@ -119,36 +123,35 @@ There is a constant $\gamma>0$ such that for all $d\le\gamma\log n/\log\log n$, 
 This result implies an exponential lower bound for resolution as well, but with a smaller exponent than in Theorem~\ref{thm:main}. Moreover, H\r{a}stad's lower bound for the odd grid is significantly more technical than the lower bound for bipartite expanders. For these reasons we work with expanders for the resolution lower bound.
 
 \subsection{Related work}
-The proof complexity of multipliers has been previously studied in the resolution, polynomial calculus, and cutting planes proof systems. However, multiplier associativity in particular has resisted attempts at upper and lower bounds in each of these proof systems.
+The proof complexity of multipliers has been previously studied in the resolution, cutting planes, and polynomial calculus proof systems. However, multiplier associativity in particular has resisted attempts at upper and lower bounds in each of these proof systems.
 
 \paragraph{Resolution.}
 As discussed above, Beame and Liew~\cite{beame-liew} constructed
-polynomial size resolution proofs for degree two identities, including commutativity and distributivity. On the lower-bound side, Singh et al.~\cite{proofdoor} gave the first proof complexity lower bound involving
+polynomial size resolution proofs for degree two identities, including commutativity and distributivity. On the lower-bound side, \cite{proofdoor} gave the first proof complexity lower bound involving
 multiplier circuits, but only in the restrictive \emph{partially-ordered
 resolution} proof system, and only for specific partial orders.
 
 \paragraph{Cutting planes.}
-Liew et al.~\cite{lbden} gave
+\cite{lbden} gave
 $O(n^2)$-length cutting planes proofs for a large class of degree two
 identities. These proofs are optimal, as the multiplier encodings themselves consist of $\Omega(n^2)$ inequalities. They noted, however, that their method does not extend to
 associativity, whose cutting planes proof complexity remains open.
 
 \paragraph{Polynomial calculus.}
 Gr\"obner-basis methods, whose derivations are polynomial calculus proofs, were
-introduced for gate-level multiplier verification by Sayed-Ahmed et al.~\cite{sayed-ahmed}
-and by Kaufmann et al.~\cite{rbk}. These methods were later scaled to large, highly optimized
-multipliers by Mahzoon et
-al.~\cite{revsca}, and, with the help of an auxiliary SAT solver, by Kaufmann et al.~\cite{kbk-fmcad}. The SAT solver was subsequently eliminated by encoding negated literals with dual
-variables~\cite{kbbn}, so that the resulting faster multiplier verification procedure yields a
-single proof certificate in polynomial calculus.
+introduced for gate-level multiplier verification~\cite{sayed-ahmed,rbk}. These methods were later scaled to large, highly optimized
+multipliers by Mahzoon, Gro\ss{}e, and
+Drechsler~\cite{revsca}, and, with the help of an auxiliary SAT solver, by Kaufmann, Biere, and Kauers~\cite{kbk-fmcad}. The SAT solver was subsequently eliminated by encoding negated literals with dual
+variables~\cite{kbbn}, so that the resulting procedure yields a
+single polynomial calculus certificate.
 
-Beyond equivalence checking, Kaufmann et al.\ showed that Gr\"obner-basis methods
+Beyond equivalence checking, Kaufmann, Biere, and Kauers showed that Gr\"obner-basis methods
 efficiently verify word-level commutativity of multipliers in practice~\cite{kbk}, and that
 the underlying derivation amounts to an $O(n^2)$-length polynomial calculus
 proof of word-level commutativity for array multipliers. Their idea extends to show that
 word-level ring identities in general, including associativity, admit
-$O(n^2)$-length polynomial calculus proofs. However, we do not know whether the corresponding bit-level identities have small proofs. Liew et al.~\cite{lbden} proved that polynomial calculus requires exponentially many monomials to extract the bit-level consequences of a
-word-level equality. So in the case of associativity, the word-level equality $(\vv{x}\vv{y})\vv{z} = \vv{x}(\vv{y}\vv{z})$ does not immediately yield a small polynomial calculus proof that the middle output bits on either side agree.
+$O(n^2)$-length polynomial calculus proofs. However, we do not know whether the corresponding bit-level identities have small proofs. \cite{lbden} also proved that polynomial calculus requires exponentially many monomials to extract the bit-level consequences of a
+word-level equality. So for associativity, the word-level equality $(\vv{x}\vv{y})\vv{z} = \vv{x}(\vv{y}\vv{z})$ does not immediately yield a small polynomial calculus proof that the middle output bits agree.
 
 This gap between word-level and bit-level reasoning is also visible in practice: PolySAT~\cite{polysat}, int-blasting~\cite{intblast}, and cvc5's finite-field solver~\cite{okt} all reason with polynomial constraints at the word level, and each adds dedicated mechanisms for recovering bit-level facts from that reasoning.
 
@@ -165,7 +168,7 @@ Section~\ref{sec:conclusion} concludes with open problems.
 
 \paragraph{Notation.}
 For integers $a\le b$, we write $[a,b)=\{a,a+1,\ldots,b-1\}$. A length $n$ bit-vector is written as
-$\vv{x}=(x_0,\ldots,x_{n-1})\in\{0,1\}^n$, and represents the integer $\sum_{i<n}x_i2^i$. Following~\cite{beame-liew}, we refer to each multiplier by its output bit-vector, so that a multiplier encoding with inputs $\vv{x}, \vv{y}$ will be labeled $\vv{x}\vv{y}$.
+$\vv{x}=(x_0,\ldots,x_{n-1})\in\{0,1\}^n$, and represents the integer $\sum_{i<n}x_i2^i$. Following~\cite{beame-liew}, we refer to each multiplier by its output bit-vector, so the multiplier with inputs $\vv{x}, \vv{y}$ is labeled $\vv{x}\vv{y}$.
 
 \paragraph{CNF formulas.}
 A \emph{literal} is a Boolean variable or its negation; a \emph{clause} is a disjunction of literals, which we treat as a set. A clause containing complementary literals is a
@@ -279,7 +282,7 @@ truncated multipliers (see Remark~\ref{rem:truncated}).
 
 \begin{figure}[ht]
 \centering
-\includegraphics[width=0.9\textwidth]{Diagrams/associativity-formula.png}
+\includegraphics[width=0.5\textwidth]{Diagrams/associativity-formula.png}
 \caption{The associativity instance $\Assoc_n$. The two inner multipliers $\Mul_n$ compute $\vv{x}\vv{y}$ and $\vv{y}\vv{z}$, the two outer
 multipliers $\Mul_{2n}$ compute $(\vv{x}\vv{y})\vv{z}$ and $\vv{x}(\vv{y}\vv{z})$, and the miter variables $e_i$, with the long miter clause $e_0\vee\cdots\vee e_{4n-1}$, assert that $(\vv{x}\vv{y})\vv{z} \neq \vv{x}(\vv{y}\vv{z})$.}
 \label{fig:assoc-miter}
@@ -328,7 +331,7 @@ The array multiplier encoding (Figure~\ref{fig:array-multiplier}) is strip-local
 \end{proposition}
 
 \begin{proof}
-The clauses of an array multiplier have constant width since each variable depends on at most three other variables, so its clauses have width at most four.
+Each variable of an array multiplier is determined by at most three other variables, so its clauses have width at most four.
  
 Fix $g\ge1$ and a $g$-sparse restriction. In an array multiplier, the only wires crossing a column boundary are carries
 (Figure~\ref{fig:array-multiplier}), so a wire in the strip with
@@ -352,11 +355,11 @@ The proof is nontrivial due to the final carry-lookahead adder. Appendix~\ref{ap
 \section{Perfect matching and its star-local extension}
 \label{sec:hard-source}
 
-The source of hardness for our resolution lower bound is the sparse perfect-matching principle of Itsykson et al.~\cite{iss,ioss}. In general, a perfect-matching principle asserts that a given graph has no perfect matching. Its CNF encoding negates this: it has one variable per edge and requires that every vertex is incident to exactly one selected edge. When the underlying graph is bipartite and has a different number of vertices on the two sides, this CNF is unsatisfiable.
+The source of hardness for our resolution lower bound is the sparse perfect-matching principle studied in~\cite{iss,ioss}. In general, a perfect-matching principle asserts that a given graph has no perfect matching. Its CNF encoding negates this: it has one variable per edge and requires that every vertex is incident to exactly one selected edge. When the underlying graph is bipartite and has a different number of vertices on the two sides, this CNF is unsatisfiable.
 
 The best-known special case is the pigeonhole principle, which is the perfect-matching principle of the complete bipartite graph $K_{m+1,m}$. Haken showed that the pigeonhole principle is hard for resolution~\cite{haken}. However, this is an inconvenient source of hardness for our reduction due to the high degree of its vertices. To absorb the
 auxiliary variables of the multiplier encodings, our reduction extends the formula with
-a new variable for every Boolean function of the edges at a vertex. For $K_{m+1,m}$, this introduces a doubly exponential number of new variables, so the Ben-Sasson--Wigderson size--width tradeoff (Theorem~\ref{thm:bw}) does not give a useful size lower bound. On the other hand, for bounded-degree graphs, this extension only adds a constant number of variables and clauses per vertex, so the width lower bound of Itsykson et al.~\cite{iss} implies an exponential size lower bound for the extension.
+a new variable for every Boolean function of the edges at a vertex. For $K_{m+1,m}$, this introduces a doubly exponential number of new variables, so the Ben-Sasson--Wigderson size--width tradeoff (Theorem~\ref{thm:bw}) does not give a useful size lower bound. On the other hand, for bounded-degree graphs, this extension only adds a constant number of variables and clauses per vertex, so the width lower bound of Itsykson, Slabodkin, and Sokolov~\cite{iss} implies an exponential size lower bound for the extension.
 
 \begin{definition}[Perfect-matching CNF]
 \label{def:pm}
@@ -380,11 +383,11 @@ For the remainder of the paper, fix an integer $m$, a constant $\Delta$ independ
 \[
 H=(U,V,E),\qquad |U|=m+1,\qquad |V|=m,
 \]
-of maximum degree at most $\Delta$ and with no isolated vertices. We use a robust form of the hardness result of Itsykson et al.~\cite{iss} for $\PM(H)$, based on star-local extension variables in the style of the functional encoding of Alekhnovich et al.~\cite{abrw}.
+of maximum degree at most $\Delta$ and with no isolated vertices. We use a robust form of the hardness result of Itsykson, Slabodkin, and Sokolov~\cite{iss} for $\PM(H)$, based on star-local extension variables in the style of the functional encoding of~\cite{abrw}.
 
 \begin{definition}[Star-local extension]
 \label{def:star-local-ext}
-For each vertex $w$ and each Boolean function $f:\{0,1\}^{E(w)}\to\{0,1\}$, introduce an extension variable $Z_{w,f}$, defined by
+For each vertex $w$ and Boolean function $f:\{0,1\}^{E(w)}\to\{0,1\}$, introduce an extension variable $Z_{w,f}$, defined by
 clauses $\operatorname{Def}(Z_{w,f})$ over variables $\{Z_{w,f}\} \cup \{X_e:e\in E(w)\}$ expressing that $Z_{w,f}=f\bigl((X_e)_{e\in
 E(w)}\bigr)$. The \emph{star-local extension} of the exact-one perfect-matching principle is
 \[
@@ -420,8 +423,6 @@ is an \emph{$(r,\Gamma)$-boundary expander} if
 \]
 \end{definition}
 
-Itsykson et al.\ obtain sparse bipartite expanders with the following properties.
-
 \begin{theorem}[\cite{iss,ioss}]
 \label{thm:iss-graphs}
 There are absolute constants $\Delta\in\N$, $\Gamma\ge1$, and $\varepsilon>0$ such that for every sufficiently large $m$ there is a bipartite graph
@@ -429,7 +430,7 @@ $H=(U,V,E)$ with $|U|=m+1$ and $|V|=m$, of maximum degree at most $\Delta$, that
 covering $V$.
 \end{theorem}
 
-The following lemma is straightforward, though to our knowledge it has not explicitly appeared in the literature. A close analogue appears as Theorem~13(ii) of Atserias and Bonet~\cite{ab04}, though they only considered extension variables representing conjunctions, rather than arbitrary Boolean functions. The proof itself is essentially the same as the proof of Lemma~4.3 given by Ben-Sasson and Nordstr\"om in~\cite{bn11}, though the statement of the lemma below is different from what they conclude.
+The following lemma is straightforward, though to our knowledge it has not explicitly appeared in the literature. A close analogue appears as Theorem~13(ii) of Atserias and Bonet~\cite{ab04}, but they only considered extension variables representing conjunctions, rather than arbitrary Boolean functions. The proof itself is essentially the same as the proof of Lemma~4.3 given by Ben-Sasson and Nordstr\"om in~\cite{bn11}, although the statement of the lemma below is different from what they conclude.
 
 \begin{lemma}[Width transfer]
 \label{lem:width-transfer}
@@ -452,7 +453,7 @@ Let $H$ be a bipartite expander given by Theorem~\ref{thm:iss-graphs}. Then $\SP
 \end{theorem}
 
 \begin{proof}
-Theorem~1.1 of the full version of~\cite{iss} shows a resolution width lower bound for $\PM(H)$ of $\Omega(m)$. Since the maximum degree $\Delta$ of the graph $H$ is constant, Lemma~\ref{lem:width-transfer} transfers this to a width lower bound for $\SPM(H)$ of $\Omega(m)$.
+Theorem~1.1 of the full version of~\cite{iss} shows a resolution width lower bound for $\PM(H)$ of $\Omega(m)$. The maximum degree $\Delta$ of the graph $H$ is constant, so Lemma~\ref{lem:width-transfer} transfers this to a width lower bound for $\SPM(H)$ of $\Omega(m)$.
 Since $\SPM(H)$ has $O(m)$ variables and constant width, the size--width tradeoff (Theorem~\ref{thm:bw}) gives a size lower bound of $2^{\Omega(m)}$.
 \end{proof}
 
@@ -480,12 +481,20 @@ Our reduction will also need the following observation, which follows immediatel
 \label{sec:outline}
 
 Throughout the reduction, we assume that $\Assoc_n$ uses a strip-local multiplier encoding $\Mul_n$ (Definition~\ref{def:strip-local}).
-At a high level, the reduction from $\SPM(H)$ to $\Assoc_n$ works as follows. We begin by constructing a restriction $\rho$ of $\Assoc_n$ such that the remaining clauses $\Assoc_n \upharpoonright_{\rho}$
+At a high level, the reduction from $\SPM(H)$ to $\Assoc_n$ works as follows. We begin by constructing a restriction $\rho$ of $\Assoc_n$ such that the remaining clauses $\Assoc_n\!\upharpoonright_{\rho}$
 form a circuit encoding of the perfect-matching constraints. Because this encoding contains circuit variables that are not present in the perfect-matching formula $\PM(H)$, the original
 perfect-matching lower bound does not immediately transfer to this restricted formula $\Assoc_n\!\upharpoonright_{\rho}$. This is why we introduced the star-local extension $\SPM(H)$. Each
-clause of the restricted formula $\Assoc_n \upharpoonright_{\rho}$ has a constant-size resolution derivation from $\SPM(H)$ (after substituting star-local extension variables in place of the clause's wire variables). Therefore a resolution refutation of $\Assoc_n$ yields a resolution refutation of $\SPM(H)$ with only a constant-factor increase
+clause of the restricted formula $\Assoc_n\!\upharpoonright_{\rho}$ has a constant-size resolution derivation from $\SPM(H)$ (after substituting star-local extension variables in place of the clause's wire variables). Therefore a resolution refutation of $\Assoc_n$ yields a resolution refutation of $\SPM(H)$ with only a constant-factor increase
 in size. The exponential lower bound for $\SPM(H)$ (Theorem~\ref{thm:star-local-hard}) thereby transfers to $\Assoc_n$.
 Figure~\ref{fig:refutation-shape} shows the shape of the composed refutation.
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=0.75\textwidth]{Diagrams/refutation-shape.png}
+\caption{The refutation of $\SPM(H)$, the star-local extension of perfect matching. This refutation uses $\SPM(H)$ to derive a subclause of each clause of the restricted, substituted
+$\Assoc_n$ in a constant number of steps. The restricted, substituted refutation of $\Assoc_n$ then derives $\bot$ from these clauses.}
+\label{fig:refutation-shape}
+\end{figure}
 
 \subsection{Reduction of star-local perfect matching to \texorpdfstring{$\Assoc_n$}{Assoc\_n}}
 \label{sec:outline-reduction}
@@ -525,14 +534,6 @@ of each restricted, substituted $\Assoc_n$ clause from the clauses of $\SPM(H)$ 
 apply the restricted, substituted refutation of $\Assoc_n$ to refute the derived clauses.
 \end{itemize}
 
-\begin{figure}[ht]
-\centering
-\includegraphics[width=0.62\textwidth]{Diagrams/refutation-shape.png}
-\caption{The refutation of $\SPM(H)$, the star-local extension of perfect matching. This refutation uses $\SPM(H)$ to derive a subclause of each clause of the restricted, substituted
-$\Assoc_n$ in a constant number of steps. The restricted, substituted refutation of $\Assoc_n$ then derives $\bot$ from these clauses.}
-\label{fig:refutation-shape}
-\end{figure}
-
 \subsection{Outline of the restriction \texorpdfstring{$\rho$}{rho}}
 \label{sec:outline-restriction}
 
@@ -541,6 +542,15 @@ We will define a $g$-sparse restriction $\rho$ in terms of three maps. We map ea
 = 1$. For each edge $e \in E$, the restriction $\rho$ leaves $y_{j(e)}$ unrestricted and identifies it with the edge variable $X_e$. It
 restricts all remaining bits of $\vv{x}$, $\vv{y}$, and $\vv{z}$ to $0$. Additionally, $\rho$ restricts some of the output bits of the
 inner multipliers $\vv{x}\vv{y}$ and $\vv{y}\vv{z}$, together with one miter variable, as we will specify below.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.75\textwidth]{Diagrams/bit-strings.png}
+\caption{The restricted input bit-vectors. Each vertex $u\in U$ maps to a $1$ in $\vv{x}$ at position $i(u)$, each vertex $v\in V$ maps to a $1$
+in $\vv{z}$ at position $k(v)$, and each edge $e\in E$ maps to an unrestricted variable $y_{j(e)}$ in $\vv{y}$ that we identify with the
+edge variable $X_e$. Each position is a multiple of $g$, and every other bit is fixed to $0$.}
+\label{fig:bit-strings}
+\end{figure}
 
 Lemma~\ref{lem:indices} constructs the maps $i(u)$, $j(e)$, $k(v)$ with special collision properties.
 In this outline we will use the fact that for an edge
@@ -557,40 +567,26 @@ products in each of the four multipliers occur only in $g$-columns
 a $g$-sparse restriction of each of the four multipliers (Lemma~\ref{lem:rho-g-sparse}). By strip-locality, every wire is a
 Boolean function of the partial products appearing in a single $g$-strip.
 
-\begin{figure}[ht]
-\centering
-\includegraphics[width=0.85\textwidth]{Diagrams/bit-strings.png}
-\caption{The restricted input bit-vectors. Each vertex $u\in U$ maps to a $1$ in $\vv{x}$ at position $i(u)$, each vertex $v\in V$ maps to a $1$
-in $\vv{z}$ at position $k(v)$, and each edge $e\in E$ maps to an unrestricted variable $y_{j(e)}$ in $\vv{y}$ that we identify with the
-edge variable $X_e$. Each position is a multiple of $g$, and every other bit is fixed to $0$.}
-\label{fig:bit-strings}
-\end{figure}
-
 \item \textbf{(Inner multipliers)} Each vertex $v \in V$ is associated with a unique $g$-column of the multiplier $\vv{x}\vv{y}$, whose index is
 $\col_{\vv{xy}}(v) := K - k(v)$. This column contains the partial products that, under $\rho$, equal the variables $X_e$ for edges $e$ of the star $E(v)$. So the effect of the multiplier circuit $\vv{x}\vv{y}$ is to constrain the output of the $g$-strip based at $\col_{\vv{xy}}(v)$
 to equal the sum $\sum_{e \in E(v)} X_e$ represented in binary.
 
 For each $v\in V$, the restriction $\rho$ fixes the output of the
 $g$-strip based at $\col_{\vv{xy}}(v)$ to the binary representation of
-$1$. This enforces
-\[
-\sum_{e\in E(v)}X_e=1,
-\]
-which is equivalent to the constraint
-$\operatorname{ExactOne}(X_{E(v)})$. Figure~\ref{fig:inner-multipliers} illustrates the effect of the restriction $\rho$ in the multiplier $\vv{x}\vv{y}$.
-
-\begin{figure}[ht]
-\centering
-\includegraphics[width=0.95\textwidth]{Diagrams/inner-multiplier.png}
-\caption{An inner array multiplier $\vv{x}\vv{y}$ under the restriction $\rho$. Incident pairs $(u,e)$, where $e=(u,v)$, map to column $\col_{\vv{xy}}(u,e)=\col_{\vv{xy}}(v)$, so this column contains the
-partial products $X_e$ for all edges $e\in E(v)$ incident to $v$. The restriction $\rho$ fixes the output of this column's $g$-strip to the binary representation of $1$, enforcing
-$\sum_{e\in E(v)}X_e=1$. Each non-incident pair $(u,e)$ maps to its own column $\col_{\vv{xy}}(u,e)$, so the output of this column is $X_e$.}
-\label{fig:inner-multipliers}
-\end{figure}
+$1$. This enforces $\sum_{e\in E(v)}X_e=1$, which is equivalent to the constraint $\operatorname{ExactOne}(X_{E(v)})$. Figure~\ref{fig:inner-multipliers} illustrates the effect of the restriction $\rho$ in the multiplier $\vv{x}\vv{y}$.
 
 Symmetrically, each $u \in U$ is associated with a unique $g$-column of the multiplier $\vv{y}\vv{z}$, whose index is
 $\col_{\vv{yz}}(u) := K - i(u)$, and which contains the variables $X_e$ for edges $e$ of the star $E(u)$. The restriction $\rho$ fixes the
 output of the $g$-strip based at $\col_{\vv{yz}}(u)$ to the binary representation of $1$, enforcing $\operatorname{ExactOne}(X_{E(u)})$.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.9\textwidth]{Diagrams/inner-multiplier.png}
+\caption{An inner array multiplier $\vv{x}\vv{y}$ under the restriction $\rho$. Incident pairs $(u_e,e)$ with $e\in E(v)$ map to the common column $\col_{\vv{xy}}(u_e,e)=\col_{\vv{xy}}(v)$, so this column contains the
+partial products $X_e$ for all edges $e\in E(v)$. The restriction $\rho$ fixes the output of this column's $g$-strip to the binary representation of $1$, enforcing
+$\sum_{e\in E(v)}X_e=1$. Each non-incident pair $(u,e)$ maps to its own column $\col_{\vv{xy}}(u,e)$, so the output of this column is $X_e$.}
+\label{fig:inner-multipliers}
+\end{figure}
 
 \item \textbf{(Outer multipliers)} Column $K$ of the outer multiplier $(\vv{x}\vv{y})\vv{z}$ contains exactly one $1$ for each $v \in V$, as shown in Figure~\ref{fig:outer-multiplier}: the restriction $\rho$ sets the output bit of $\vv{x}\vv{y}$ at index $\col_{\vv{xy}}(v)=K-k(v)$ to $1$, and multiplying this output by
 $z_{k(v)}=1$ contributes a $1$ to column $K$. The remaining partial products in column $K$ are $0$ since $\rho$ restricts every other bit of $\vv{z}$ to $0$.
@@ -600,22 +596,21 @@ $(\vv{x}\vv{y})\vv{z}$ contains exactly $|V|=m$ ones, so the output of the $g$-s
 $K$ is forced to the binary representation of $m$ (Observation~\ref{obs:strip-counts}).
 Symmetrically, column $K$ of the outer multiplier $\vv{x}(\vv{y}\vv{z})$ contains a $1$ for each $u
 \in U$, so the output of the $g$-strip based at $K$ is forced to the binary representation of $m+1$.
-\begin{figure}[ht]
+This means that the outer multipliers disagree on their $K$-th output bit, so $\rho$ sets the miter variable $e_K = 1$ to satisfy the long
+miter clause $e_0 \vee \cdots \vee e_{4n-1}$. This completes the description of $\rho$.
+
+
+\item \textbf{(Other $g$-columns)} In all four multipliers, each remaining $g$-column not covered above contains edge variables from at most one star (Figures~\ref{fig:inner-multipliers} and~\ref{fig:outer-star-local}). Therefore every wire in the corresponding $g$-strips is a Boolean function of a single star.
+\end{itemize}
+
+\begin{figure}[t]
 \centering
-\includegraphics[width=0.95\textwidth]{Diagrams/outer-multiplier.png}
+\includegraphics[width=0.9\textwidth]{Diagrams/outer-multiplier.png}
 \caption{An outer array multiplier $(\vv{x}\vv{y})\vv{z}$ under the restriction $\rho$. Column $K$ contains a constant $1$ for each $v\in V$, which comes from the output bit of $\vv{x}\vv{y}$ at $\col_{\vv{xy}}(v)$ multiplied by $z_{k(v)}=1$. Every other partial product in
 the column is $0$, so the $g$-strip based at $K$ outputs the binary representation of $m$. In the other outer multiplier
 $\vv{x}(\vv{y}\vv{z})$, the same $g$-strip outputs $m+1$.}
 \label{fig:outer-multiplier}
 \end{figure}
-
-This means that the outer multipliers disagree on their $K$-th output bit, so $\rho$ sets the miter variable $e_K = 1$ to satisfy the long
-miter clause $e_0 \vee \cdots \vee e_{4n-1}$. This completes the description of $\rho$.
-
-\item \textbf{(Other $g$-columns)} Under $\rho$, in all four multipliers the
-partial products within each remaining $g$-column not covered above will also depend only on the edge
-variables from a single star (Figures~\ref{fig:inner-multipliers} and~\ref{fig:outer-star-local}). Therefore, each wire in these columns is a Boolean function of the edge variables of a single star.
-\end{itemize}
 
 \section{Construction of the restriction \texorpdfstring{$\rho$}{rho}}
 \label{sec:rho}
@@ -644,6 +639,7 @@ and $\vv{x}(\vv{y}\vv{z})$, both in the same column
 $
 i(u)+j(e)+k(v).
 $
+We call $(u,e)$, $(e,v)$, and $(u,e,v)$ \emph{incident} when the vertices are endpoints of $e$.
 Accordingly, we define maps from pairs and triples to columns.
 \begin{definition}[Columns]
 	\label{def:columns}
@@ -684,7 +680,7 @@ $s_a-s_b=s_c-s_d\ne0$, then
 The right side has absolute value $<2p$, while the left side is a multiple of $2p$, so $a-b=c-d=:h$. Reducing the original equality modulo
 $p$ gives $h(a+b)\equiv h(c+d)$. Since the difference is nonzero, $h\ne0$ and $|h|<p$, so cancel $h$ to get $a+b\equiv c+d\pmod p$. Adding
 and subtracting this congruence with $a-b=c-d$ gives $2a\equiv2c$ and $2b\equiv2d\pmod p$. Because $p$ is odd, $2$ is invertible, hence
-$a\equiv c$ and $b\equiv d\pmod p$. As $a,b,c,d\in\{0,\ldots,p-1\}$, we have $a=c$ and $b=d$, hence $(a,b)=(c,d)$.
+$a\equiv c$ and $b\equiv d\pmod p$. As $a,b,c,d\in\{0,\ldots,p-1\}$, we have $a=c$ and $b=d$.
 \end{proof}
 
 \begin{lemma}[Construction of index maps]
@@ -704,10 +700,10 @@ with the following properties.
 \begin{enumerate}[label=(\alph*)]
 \item For each vertex $v\in V$ the
 incident pairs $(u_e,e)$ with edge $e\in E(v)$ map to a common column $\col_{\vv{xy}}(u_e,e)$, denoted
-$\col_{\vv{xy}}(v)$. Distinct vertices $v\in V$ map to distinct columns $\col_{\vv{xy}}(v)$. Each non-incident pair $(u,e)$, $u\ne u_e$, occupies its own column $\col_{\vv{xy}}(u,e)$.
+$\col_{\vv{xy}}(v)$. Distinct vertices $v\in V$ map to distinct columns $\col_{\vv{xy}}(v)$. Each non-incident pair $(u,e)$ occupies its own column $\col_{\vv{xy}}(u,e)$.
 \item For each vertex $u\in U$ the
 incident pairs $(e,v_e)$ with edge $e\in E(u)$ map to a common column $\col_{\vv{yz}}(e,v_e)$, denoted
-$\col_{\vv{yz}}(u)$. Distinct vertices in $U$ map to distinct columns $\col_{\vv{yz}}(u)$. Each non-incident pair $(e,v)$, $v\ne v_e$, occupies its own column $\col_{\vv{yz}}(e,v)$.
+$\col_{\vv{yz}}(u)$. Distinct vertices in $U$ map to distinct columns $\col_{\vv{yz}}(u)$. Each non-incident pair $(e,v)$ occupies its own column $\col_{\vv{yz}}(e,v)$.
 \end{enumerate}
 \item \textbf{Outer collision pattern.} Define the \emph{difference pair} of a triple
 $(u,e,v)\in U\times E\times V$ as
@@ -741,9 +737,16 @@ $(d, 0)$ with $d \ne 0$. The difference $d$ is produced by a unique
 ordered pair $(u, u_e)$ with $d = i(u) - i(u_e)$, so only edge variables $X_e$ for edges $e \in E(u_e)$ can appear
 in this $g$-column. The same reasoning applies to every $g$-column corresponding to a non-$(0,0)$ difference pair.
 
+\begin{figure}[ht]
+\centering
+\includegraphics[width=0.95\textwidth]{Diagrams/outer-multiplier-star-local.png}
+\caption{Aside from column $K$, there are three kinds of $g$-columns of the outer multiplier $(\vv{x}\vv{y})\vv{z}$ under the restriction $\rho$. In each case, the wires inside the corresponding $g$-strip are functions of the Boolean variables from a single star.}
+\label{fig:outer-star-local}
+\end{figure}
+
 \begin{proof}
 With $M=32m^2$, let $s_0,\ldots,s_m\in[0,M)$ be the marks given by Lemma~\ref{lem:golomb}. Choose injections of $U$ and $V$ separately into these marks,
-and write $s_u$ and $s_v$ for the marks assigned to $u\in U$ and $v\in V$. To obtain property (iii), for $e=(u_e,v_e)$ we want the outer
+and write $s_u$ and $s_v$ for the marks assigned to $u\in U$ and $v\in V$. To obtain property (iii), we want the outer
 column
 \[
 \col_{(\vv{x}\vv{y})\vv{z}}(u,e,v)=i(u)+j(e)+k(v)
@@ -754,7 +757,7 @@ B=2M+1.
 \]
 Then the two-digit base-$B$ value $a+Bb$, for $|a|,|b|<M$, uniquely determines its digits. We refer to this as \emph{base-$B$ uniqueness}.
 We therefore scale the $U$-marks by $g$ and the $V$-marks by $gB$, and build $j(e)$ so that $\col_{(\vv{x}\vv{y})\vv{z}}$ is the same column
-for all incident triples $(u,e,v)$. To this end, set
+for all incident triples $(u_e,e,v_e)$. To this end, set
 \begin{equation}
 	\label{eq:coords}
 	i(u)=gs_u,\qquad k(v)=gBs_v,\qquad j(e)=K-i(u_e)-k(v_e)
@@ -762,7 +765,7 @@ for all incident triples $(u,e,v)$. To this end, set
 where we choose the constant $K=2g(B+1)M$ to make $j(e)$ non-negative. Set $n_0:=4K$. With these
 parameters, $n_0=O(m^4\log m)$.
 
-\emph{Proof of (i).} It is clear from the construction that each $i(u), j(e), k(v)$ is a multiple of $g$. The maps $i$ and $k$ are injective because the marks $s_u$ and $s_v$ are assigned injectively. For map $j$, since
+\emph{Proof of (i).} It is clear from the construction that each $i(u), j(e), k(v)$ is a multiple of $g$. The maps $i$ and $k$ are injective because the marks $s_u$ and $s_v$ are assigned injectively. For the map $j$, since
 \[
 j(e)=K-g(s_{u_e}+Bs_{v_e}),
 \]
@@ -775,7 +778,7 @@ Finally, $i(u)+j(e)+k(v)=K+g(s_u-s_{u_e})+gB(s_v-s_{v_e})$ exceeds $K$ by less t
  \col_{\vv{xy}}(u,e)= i(u) + j(e) = K-k(v_e)+g(s_u-s_{u_e}).
 \end{equation}
 Thus, for each $v\in V$, the incident pairs $(u_e,e)$ with $e\in E(v)$ share the column $\col_{\vv{xy}}(v):=K-k(v)$, and these columns
-are distinct for distinct $v$ because $k$ is injective. Each non-incident pair $(u,e) = (u,(u_e,v_e))$ with $u \neq u_e$ occupies its own
+are distinct for distinct $v$ because $k$ is injective. Each non-incident pair $(u,e)$ occupies its own
 column because of base-$B$ uniqueness and the fact that the difference $s_u-s_{u_e}$ is attained by a unique pair $(u, u_e)$
 (Lemma~\ref{lem:golomb}). This proves (ii)(a).
 
@@ -824,10 +827,9 @@ remaining bits of $\vv{x}$, $\vv{y}$, and $\vv{z}$ to $0$.
 $\col_{\vv{xy}}(v)$ for $v\in V$ and $\col_{\vv{yz}}(u)$ for $u\in U$.
 For each $v\in V$, the restriction $\rho$ fixes the output of the $g$-strip of $\vv{x}\vv{y}$ with base $\col_{\vv{xy}}(v)$ to the binary representation of
 $1$ ($\rho$ sets the output bit in column $\col_{\vv{xy}}(v)$ to $1$ and the other $g-1$ output bits to $0$), and for each $u\in U$, it
-fixes the output of the $g$-strip of $\vv{y}\vv{z}$ with base $\col_{\vv{yz}}(u)$ to the binary representation of $1$. The restriction $\rho$ leaves the output bit in column $\col_{\vv{xy}}(u,e)$ unset for each non-incident pair $(u,e)$ where
-$u\ne u_e$, and sets every other output
+fixes the output of the $g$-strip of $\vv{y}\vv{z}$ with base $\col_{\vv{yz}}(u)$ to the binary representation of $1$. The restriction $\rho$ leaves the output bit in column $\col_{\vv{xy}}(u,e)$ unset for each non-incident pair $(u,e)$, and sets every other output
 bit of $\vv{x}\vv{y}$ to $0$. Symmetrically, $\rho$ leaves the output bit in column
-$\col_{\vv{yz}}(e,v)$ unset for each non-incident pair $(e,v)$ where $v\ne v_e$, and sets every other output bit of $\vv{y}\vv{z}$ to $0$.
+$\col_{\vv{yz}}(e,v)$ unset for each non-incident pair $(e,v)$, and sets every other output bit of $\vv{y}\vv{z}$ to $0$.
 \item \textbf{(Miter)} The restriction $\rho$ sets the miter variable $e_K=1$.
 \end{enumerate}
 \end{definition}
@@ -860,7 +862,7 @@ inner multipliers this follows from (i), since every star of $H$ has at most $m+
 
 Now consider the outer multiplier $(\vv{x}\vv{y})\vv{z}$. The restriction $\rho$ sets each of the bits in $\vv{z}$ to $0$ except for the bits $z_{k(v)}$, and sets each of the bits in $\vv{x}\vv{y}$ to $0$ except for those at the columns $\col_{\vv{xy}}(u,e)$. So every partial
 product of $(\vv{x}\vv{y})\vv{z}$ not forced to $0$ lies in a column of the form $\col_{\vv{xy}}(u,e)+k(v)=\col_{(\vv{x}\vv{y})\vv{z}}(u,e,v)$. This is a $g$-column by
-Lemma~\ref{lem:indices}(i). Within a given column of $(\vv{x}\vv{y})\vv{z}$, distinct partial products have distinct factors $z_{k(v)}$ and hence correspond to distinct $v\in V$, by injectivity of $k(v)$ (Lemma~\ref{lem:indices}(i)). So each $g$-column contains at most $|V|=m$ partial products not forced to $0$. The same holds for the $g$-columns of
+Lemma~\ref{lem:indices}(i). Within a given column of $(\vv{x}\vv{y})\vv{z}$, distinct partial products have distinct factors $z_{k(v)}$ and hence correspond to distinct $v\in V$. So each $g$-column contains at most $|V|=m$ partial products not forced to $0$. The same holds for the $g$-columns of
 $\vv{x}(\vv{y}\vv{z})$ with the $m+1$ vertices $u \in U$.
 \end{proof}
 
@@ -869,10 +871,10 @@ $\vv{x}(\vv{y}\vv{z})$ with the $m+1$ vertices $u \in U$.
 Under the restriction $\rho$, the outer multiplier strips at base $K$ are forced to output the binary representation of $m$ in $(\vv{x}\vv{y})\vv{z}$ and of $m+1$ in $\vv{x}(\vv{y}\vv{z})$. In particular, the output bits at column $K$ disagree.
 \end{lemma}
 \begin{proof}
-We claim that the $g$-column $K$ of multiplier $(\vv{x}\vv{y})\vv{z}$ contains exactly $m$ ones, one for each $v\in V$. Indeed, for each $v\in V$, the restriction $\rho$ sets the output bit of $\vv{x}\vv{y}$ at $\col_{\vv{xy}}(v)$ and the input bit
+We claim that the $g$-column $K$ of the multiplier $(\vv{x}\vv{y})\vv{z}$ contains exactly $m$ ones, one for each $v\in V$. Indeed, for each $v\in V$, the restriction $\rho$ sets the output bit of $\vv{x}\vv{y}$ at $\col_{\vv{xy}}(v)$ and the input bit
 $z_{k(v)}$ to $1$. Their product is a partial product lying in column $\col_{\vv{xy}}(v)+k(v)=K$, and by
 Lemma~\ref{lem:indices}(ii),(iii) it is the only partial product in column $K$ containing $z_{k(v)}$. Every other
-partial product in column $K$ is forced to $0$, since $\rho$ restricts every other bit of $\vv{z}$ to $0$. By Lemma~\ref{lem:rho-g-sparse}(ii), $\rho$ is a $g$-sparse restriction of the inputs of multiplier $(\vv{x}\vv{y})\vv{z}$, hence Observation~\ref{obs:strip-counts} applies and the strip at base $K$ is forced to output the binary
+partial product in column $K$ is forced to $0$, since $\rho$ restricts every other bit of $\vv{z}$ to $0$. By Lemma~\ref{lem:rho-g-sparse}(ii), $\rho$ is a $g$-sparse restriction of the inputs of the multiplier $(\vv{x}\vv{y})\vv{z}$, hence Observation~\ref{obs:strip-counts} applies and the strip at base $K$ is forced to output the binary
 representation of $m$ (see Figure~\ref{fig:outer-multiplier}). Symmetrically, column $K$ of the multiplier $\vv{x}(\vv{y}\vv{z})$ contains a $1$ for each $u\in U$, so its strip at base $K$ is forced to output the binary representation of $m+1$. Since $m$ and $m+1$ disagree in their least significant bit, the output bits at column $K$ disagree.
 \end{proof}
 
@@ -912,13 +914,6 @@ Since $\rho$ is a $g$-sparse restriction of the inputs for each of the four
 multipliers (Lemma~\ref{lem:rho-g-sparse}(ii)) and $\Mul_n$ is a strip-local encoding, under $\rho$ every wire of these multipliers computes a Boolean function of the partial products within a single
 strip's base column. The statement then follows for the inner multipliers $\vv{x}\vv{y}$ and $\vv{y}\vv{z}$ by Lemma~\ref{lem:rho-g-sparse}(i).
 
-\begin{figure}[ht]
-\centering
-\includegraphics[width=0.95\textwidth]{Diagrams/outer-multiplier-star-local.png}
-\caption{Aside from column $K$, there are three kinds of $g$-columns of the outer multiplier $(\vv{x}\vv{y})\vv{z}$ under the restriction $\rho$. In each case, the wires inside the corresponding $g$-strip are functions of the Boolean variables from a single star. In other words, every wire of the outer multiplier is constant, edge-local, or star-local.}
-\label{fig:outer-star-local}
-\end{figure}
-
 For the outer multipliers, each of their input bits is either constant or computes a single edge variable $X_e$. Consider, for example, the multiplier $(\vv{x}\vv{y})\vv{z}$. Its input bits $\vv{z}$ are all set to constants by $\rho$. In the other input bit-vector $(\vv{x}\vv{y})$, each unrestricted bit is the base output bit of an inner multiplier strip holding a single partial product
 $X_e$ (Definition~\ref{def:rho}(b), Lemma~\ref{lem:rho-g-sparse}(i)). By Observation~\ref{obs:strip-counts} this output bit computes $X_e$.
 
@@ -937,7 +932,7 @@ with the output bit of $\vv{y}\vv{z}$ at $\col_{\vv{yz}}(u_e)$, and $\rho$ sets 
 so every triple mapping to this column has the form $(u,e,v)$ with $e=(u',v')$. If the graph $H$ contains the edge $(u',v')$, then in both outer multipliers this column contains the single edge variable $X_{(u',v')}$. Otherwise the column contains no edge variables.
 \end{itemize}
 
-Finally, we check the miter variables. Each miter variable $e_\ell$ depends only on the partial products that the two outer multipliers hold in the strip containing column $\ell$. In each of the four cases, these partial products involve edge variables from at most one star, so each miter variable $e_\ell$ is also constant, edge-local, or star-local.
+Finally, we check the miter variables. Each miter variable $e_\ell$ depends only on the partial products of the two outer multipliers in the strip containing column $\ell$. In each of the four cases, these partial products involve edge variables from at most one star, so each miter variable $e_\ell$ is also constant, edge-local, or star-local.
 \end{proof}
 
 The next lemma is not used directly in the reduction, but it is needed in the proof of Lemma~\ref{lem:local-soundness}.
@@ -955,8 +950,8 @@ Consider the multiplier $\vv{x}\vv{y}$; the argument for $\vv{y}\vv{z}$ is symme
 
 Suppose first that the assignment $\alpha$ selects exactly one edge in every star $E(v)$, $v\in V$. By Lemma~\ref{lem:rho-g-sparse}(i), for each $v\in V$ the $g$-column $\col_{\vv{xy}}(v)$ contains exactly the partial products
 $\{X_e : e\in E(v)\}$. Since $\rho$ is $g$-sparse (Lemma~\ref{lem:rho-g-sparse}(ii)), Observation~\ref{obs:strip-counts} applies, and the strip based at this column outputs $1$ in binary, agreeing with $\rho$. In a strip holding a single partial product $X_e$, the
-output bit at the base column computes $X_e$ and is left unset by $\rho$, while the $g-1$ higher output bits of the strip compute $0$. Strips with no
-partial products output $0$. In all cases propagation agrees with $\rho$, so $\bar\alpha$ satisfies every clause of $\vv{x}\vv{y}\!\upharpoonright_{\rho}$.
+output bit at the base column computes $X_e$ and is left unset by $\rho$, while the $g-1$ higher output bits of the strip compute $0$. Strips whose
+partial products are all forced to $0$ output $0$. In all cases the propagated values agree with $\rho$, so $\bar\alpha$ satisfies every clause of $\vv{x}\vv{y}\!\upharpoonright_{\rho}$.
 
 Conversely, suppose that the propagated assignment $\bar\alpha$ satisfies $\vv{x}\vv{y}\!\upharpoonright_{\rho}$. Since $\bar\alpha$ extends $\rho$, it satisfies the unrestricted encoding
 $\vv{x}\vv{y}$, and is therefore a correct evaluation of the multiplier (Definition~\ref{def:exact-encoding}). By Lemma~\ref{lem:rho-g-sparse}(i), for each $v\in V$ the strip at base $\col_{\vv{xy}}(v)$ outputs the binary count of the true edge variables in $E(v)$. Since the restriction $\rho$ sets this strip's output to $1$ in binary, exactly one edge variable of
@@ -982,10 +977,10 @@ Since every variable of $C$ depends only on edge variables $X_e$ with an endpoin
 
 \emph{Outer multipliers.} The restriction $\rho$ assigns no wires in the outer multipliers; it fixes only some of their inputs, namely bits of $\vv{x}$, $\vv{z}$, $\vv{x}\vv{y}$, and $\vv{y}\vv{z}$. The propagated assignment $\bar\alpha$ therefore satisfies every clause of the outer multipliers.
 
-\emph{Miter clauses.} The miter variables $e_\ell$ with $\ell\ne K$ are unassigned by $\rho$, and their defining clauses are gate definitions, so they too are satisfied by the
-propagated assignment $\bar\alpha$.
+\emph{Miter clauses.} The miter variables $e_\ell$ with $\ell\ne K$ are unassigned by $\rho$, and their defining clauses are gate definitions, so the
+propagated assignment $\bar\alpha$ satisfies them as well.
 
-It remains to check the clauses defining $e_K$. As $\rho$ sets $e_K=1$, these clauses assert that the two outer multipliers disagree at output bit $K$. Indeed, by Lemma~\ref{lem:rho-outer-outputs}, the two output bits at column $K$ are forced to disagree under $\rho$. Therefore $\bar\alpha$ satisfies these clauses.
+It remains to check the clauses defining $e_K$. As $\rho$ sets $e_K=1$, these clauses assert that the two outer multipliers disagree at output bit $K$. By Lemma~\ref{lem:rho-outer-outputs}, these two output bits are forced to disagree under $\rho$, so $\bar\alpha$ satisfies these clauses.
 \end{proof}
 
 \begin{lemma}[Reduction from perfect matching]
@@ -1000,12 +995,13 @@ $\Assoc_n\!\upharpoonright_\rho$ of size at most $s$.
 
 Next, define a substitution $\sigma$ from the variables of $\Assoc_n\!\upharpoonright_\rho$ to constants and literals over the variables of
 $\SPM(H)$ as follows. Every wire that is forced to a constant under $\rho$ maps to that constant. The unset input bits
-$y_{j(e)}$ map to the edge variables $X_e$. Each edge-local wire maps to the literal it computes, $X_e$ or $\neg X_e$. Every remaining wire is, by Lemma~\ref{lem:locality}, a Boolean function $f$ of one
-vertex star $E(w)$, and maps to the extension variable $Z_{w,f}$. Note that any number of wires computing the same local function are
-identified with a single $\SPM(H)$ literal. By the substitution lemma (Lemma~\ref{lem:substitution}), the refutation of $\Assoc_n\!\upharpoonright_\rho$ yields a refutation of
+$y_{j(e)}$ map to the edge variables $X_e$. Each edge-local wire maps to the literal it computes, $X_e$ or $\neg X_e$. Every remaining wire is, by Lemma~\ref{lem:locality}, a Boolean function $f$ of a single
+star $E(w)$, and maps to the extension variable $Z_{w,f}$. Wires computing the same function of the same star all map to the same variable $Z_{w,f}$. By the substitution lemma (Lemma~\ref{lem:substitution}), the refutation of $\Assoc_n\!\upharpoonright_\rho$ yields a refutation of
 $(\Assoc_n\!\upharpoonright_\rho)^\sigma$ of size at most $s$.
 
-It remains to derive the clauses of the restricted, substituted formula $(\Assoc_n\!\upharpoonright_\rho)^\sigma$ from $\SPM(H)$. Each clause $C^\sigma$ of $(\Assoc_n\!\upharpoonright_\rho)^\sigma$ is the result of applying the substitution $\sigma$ to a clause $C$ of the restricted formula $\Assoc_n\!\upharpoonright_\rho$. The clause $C$ has constant width: all clauses of $\Assoc_n$ have constant width except the long miter clause $e_0\vee\cdots\vee e_{4n-1}$, which $\rho$ satisfies. By Lemma~\ref{lem:locality}, each variable of $C$ depends on the edge variables of at most one star, so $\supp(C)$ has constant size. We claim that the clauses $\operatorname{ExactOne}(X_{E(w)})$ and $\operatorname{Def}(Z_{w,f})$ for $w\in \supp(C)$ imply $C^\sigma$. Indeed, let $\alpha$ be an assignment to the variables of $\SPM(H)$ that satisfies these clauses. By Lemma~\ref{lem:local-soundness}, the propagated assignment $\bar\alpha$ (Definition~\ref{def:propagation}) satisfies $C$. Furthermore, the definitions $\operatorname{Def}(Z_{w,f})$ ensure that the substituted values agree with the propagated values, i.e. $\alpha(\sigma(q))=\bar\alpha(q)$ for every variable $q$ of $C$. Hence, $\alpha$ satisfies $C^\sigma$. By Lemma~\ref{lem:star-local-derivations}, some subclause of $C^\sigma$ therefore has a constant-size derivation from $\SPM(H)$. Applying the refutation of $(\Assoc_n\!\upharpoonright_\rho)^\sigma$ to these subclauses gives a refutation of $\SPM(H)$ of size $O(s)$.
+It remains to derive the clauses of the restricted, substituted formula $(\Assoc_n\!\upharpoonright_\rho)^\sigma$ from $\SPM(H)$. Each clause $C^\sigma$ of $(\Assoc_n\!\upharpoonright_\rho)^\sigma$ is the result of applying the substitution $\sigma$ to a clause $C$ of the restricted formula $\Assoc_n\!\upharpoonright_\rho$. The clause $C$ has constant width: all clauses of $\Assoc_n$ have constant width except the long miter clause $e_0\vee\cdots\vee e_{4n-1}$, which $\rho$ satisfies. By Lemma~\ref{lem:locality}, each variable of $C$ depends on the edge variables of at most one star, so $\supp(C)$ has constant size. 
+
+We claim that the clauses $\operatorname{ExactOne}(X_{E(w)})$ and $\operatorname{Def}(Z_{w,f})$ for $w\in \supp(C)$ imply $C^\sigma$. Indeed, let $\alpha$ be an assignment to the variables of $\SPM(H)$ that satisfies these clauses. By Lemma~\ref{lem:local-soundness}, the propagated assignment $\bar\alpha$ (Definition~\ref{def:propagation}) satisfies $C$. Furthermore, the definitions $\operatorname{Def}(Z_{w,f})$ ensure that the substituted values agree with the propagated values, i.e., $\alpha(\sigma(q))=\bar\alpha(q)$ for every variable $q$ of $C$. Hence, $\alpha$ satisfies $C^\sigma$. By Lemma~\ref{lem:star-local-derivations}, some subclause of $C^\sigma$ therefore has a constant-size derivation from $\SPM(H)$. Applying the refutation of $(\Assoc_n\!\upharpoonright_\rho)^\sigma$ to these subclauses gives a refutation of $\SPM(H)$ of size $O(s)$.
 \end{proof}
 
 \begin{theorem}[Lower bound for multiplier associativity]
@@ -1030,7 +1026,7 @@ By Lemma~\ref{lem:reduction}, a refutation of $\Assoc_n$ of size $s$ gives a ref
 
 \begin{remark}[Truncated multiplication]
 \label{rem:truncated}
-The above lower bound, as well as the bounded-depth Frege lower bound we will prove in Section~\ref{sec:frege}, apply unchanged to associativity of truncated multiplication, where each multiplier outputs only the $n$ low-order bits of
+The above lower bound, as well as the bounded-depth Frege lower bound we will prove in Section~\ref{sec:frege}, applies unchanged to associativity of truncated multiplication, where each multiplier outputs only the $n$ low-order bits of
 the product and the miter compares $n$ bits. The construction places the
 input positions $i(u), j(e), k(v)$, the restricted strip columns, and the
 miter variable $e_K$ all below $n_0 \le n$. So under $\rho$, every partial product
@@ -1089,7 +1085,7 @@ H\r{a}stad~\cite{hastad-php} studied the CNF $\PM(\Grid_t)$ under the name of th
 
 \begin{theorem}[{H\r{a}stad~\cite[Theorem~5.1]{hastad-php}}]
 \label{thm:hastad}
-Let $t$ be an odd integer and assume that $d\le O(\log t/\log\log t)$. Then any depth $d$ Frege refutation of $\PM(\Grid_t)$ requires size
+Let $t$ be an odd integer and let \mbox{$d\le O(\log t/\log\log t)$}. Then any depth $d$ Frege refutation of $\PM(\Grid_t)$ requires size
 \[
 \exp\bigl(\Omega\bigl(t^{1/(2d-1)}(\log t)^{O(1)}\bigr)\bigr).
 \]
@@ -1120,7 +1116,7 @@ Prepending these derivations to $\pi^\rho$ gives a refutation $\pi\!\upharpoonri
 \emph{DNF substitution.} By Lemma~\ref{lem:locality}, every variable of $\Assoc_n\!\upharpoonright_\rho$ is an edge variable or a wire that is constant, edge-local, or star-local. Define a formula substitution $\sigma$ accordingly: an edge variable $X_e$ maps to itself; a constant wire maps to the corresponding value $\neg\bot$ or $\bot$; an edge-local wire maps to the corresponding literal $X_e$ or $\neg X_e$; and a wire that is star-local at $w$ and computes $f(X_{E(w)})$ maps to the canonical DNF of $f$, which has depth at most $3$ and constant size. Then $\sigma$ is a substitution with depth at most $3$ and constant size. By Lemma~\ref{lem:frege-substitution}, $(\pi\!\upharpoonright_\rho)^\sigma$ is a depth $d+O(1)$, size $O(s)$ refutation of $(\Assoc_n\!\upharpoonright_\rho)^\sigma$.
 
 \emph{Local derivations.} 
-It remains to derive the formulas of $(\Assoc_n\!\upharpoonright_\rho)^\sigma$ from $\PM(H)$. Each such formula is $C^\sigma$ for a clause $C$ of $\Assoc_n\!\upharpoonright_\rho$. The clause $C$ has constant width, since $\rho$ satisfies the long miter clause, and by Lemma~\ref{lem:locality} each variable of $C$ depends on the edge variables of at most one star, so $\supp(C)$ has constant size. We claim that the clauses $\operatorname{ExactOne}(X_{E(w)})$ for $w\in\supp(C)$ imply $C^\sigma$. Indeed, let $\alpha$ be an assignment to the edge variables that satisfies these clauses. By Lemma~\ref{lem:local-soundness}, the propagated assignment $\bar\alpha$ (Definition~\ref{def:propagation}) satisfies the clause $C$. Furthermore, $\sigma$ maps each variable $q$ of clause $C$ to a formula computing its Boolean function, so the substituted values agree with the propagated values, i.e. $\alpha(\sigma(q))=\bar\alpha(q)$. Hence $\alpha$ satisfies $C^\sigma$. By Lemma~\ref{lem:frege-local-derivations}, the formula $C^\sigma$ therefore has a constant-depth, constant-size derivation from $\PM(H)$. Applying the refutation $(\pi\!\upharpoonright_\rho)^\sigma$ of $(\Assoc_n\!\upharpoonright_\rho)^\sigma$ to these derived formulas gives a refutation of $\PM(H)$ with depth $d+O(1)$ and size $O(s)$.
+It remains to derive the formulas of $(\Assoc_n\!\upharpoonright_\rho)^\sigma$ from $\PM(H)$. Each such formula is $C^\sigma$ for a clause $C$ of $\Assoc_n\!\upharpoonright_\rho$. The clause $C$ has constant width, since $\rho$ satisfies the long miter clause, and by Lemma~\ref{lem:locality} each variable of $C$ depends on the edge variables of at most one star, so $\supp(C)$ has constant size. We claim that the clauses $\operatorname{ExactOne}(X_{E(w)})$ for $w\in\supp(C)$ imply $C^\sigma$. Indeed, let $\alpha$ be an assignment to the edge variables that satisfies these clauses. By Lemma~\ref{lem:local-soundness}, the propagated assignment $\bar\alpha$ (Definition~\ref{def:propagation}) satisfies the clause $C$. Furthermore, $\sigma$ maps each variable $q$ of clause $C$ to a formula computing its Boolean function, so the substituted values agree with the propagated values, i.e., $\alpha(\sigma(q))=\bar\alpha(q)$. Hence $\alpha$ satisfies $C^\sigma$. By Lemma~\ref{lem:frege-local-derivations}, the formula $C^\sigma$ therefore has a constant-depth, constant-size derivation from $\PM(H)$. Applying the refutation $(\pi\!\upharpoonright_\rho)^\sigma$ of $(\Assoc_n\!\upharpoonright_\rho)^\sigma$ to these derived formulas gives a refutation of $\PM(H)$ with depth $d+O(1)$ and size $O(s)$.
 \end{proof}
 
 \begin{theorem}[Bounded-depth Frege lower bound]
@@ -1155,7 +1151,7 @@ A resolution refutation is a depth $1$ Frege refutation in a Frege system whose 
 
 \begin{remark}[Number of lines]
 \label{rem:frege-lines}
-H\r{a}stad also proved that for $d\le O(\log t/\log\log t)$, every depth $d$ Frege refutation of $\PM(\Grid_t)$ whose lines have size at most $M$ has at least $\exp\bigl(\Omega\bigl(t/((\log M)^{2d-1}(\log t)^{O(1)})\bigr)\bigr)$ lines~\cite[Theorem~7.1]{hastad-php}. The proof of Lemma~\ref{lem:frege-transfer} turns a depth $d$ Frege refutation of $\Assoc_n$ with $L$ lines, each of size at most $M$, into a depth $d+d_0$ Frege refutation of $\PM(\Grid_t)$ with $O(L)$ lines of size $O(M)$, so $L$ satisfies the same bound with $d+d_0$ in place of $d$, $O(M)$ in place of $M$, and $t=\Omega((n/\log n)^{1/8})$. In particular, for constant $d$ and lines of polynomial size, a depth $d$ Frege refutation of $\Assoc_n$ requires $\exp\bigl(n^{1/8-o(1)}\bigr)$ lines.
+H\r{a}stad also proved that for $d\le O(\log t/\log\log t)$, if every line of a depth $d$ Frege refutation of $\PM(\Grid_t)$ has size at most $M$, then the refutation has at least $\exp\bigl(\Omega\bigl(t/((\log M)^{2d-1}(\log t)^{O(1)})\bigr)\bigr)$ lines~\cite[Theorem~7.1]{hastad-php}. The proof of Lemma~\ref{lem:frege-transfer} turns a depth $d$ Frege refutation of $\Assoc_n$ with $L$ lines, each of size at most $M$, into a depth $d+d_0$ Frege refutation of $\PM(\Grid_t)$ with $O(L)$ lines of size $O(M)$, so $L$ satisfies the same bound with $d+d_0$ in place of $d$, $O(M)$ in place of $M$, and $t=\Omega((n/\log n)^{1/8})$. In particular, for constant $d$ and lines of polynomial size, a depth $d$ Frege refutation of $\Assoc_n$ requires $\exp\bigl(n^{1/8-o(1)}\bigr)$ lines.
 \end{remark}
 
 \section{Conclusion and open problems}
@@ -1181,20 +1177,7 @@ Finally, we conjecture that the $O(n^6\log n)$-size resolution proofs of commuta
 
 \section*{Acknowledgements}
 
-We thank Paul Beame and Andrei Constantinescu for helpful comments and pointers to the literature.
-
-\section*{AI Disclosure}
-
-The main ideas and the core proof of the associativity lower bound are due to GPT-5.6-Sol. During the verification process, the author reformulated and rewrote the definitions, lemma statements, and proofs with the assistance of Claude Fable 5, and added attributions along the way. The author wrote initial drafts of the expository text, including the introduction,
-proof outline, and conclusion, and used Claude Fable 5 afterwards to improve presentation.
-
-The author produced the diagrams with assistance from Claude Fable 5. The author drew each figure by hand, sent a photo to Claude, and then refined the generated
-diagram with further prompting.
-
-The author takes full responsibility for the correctness of the proofs and results.
-
-\bibliographystyle{amsplain}
-\bibliography{references}
+We thank Paul Beame for suggesting a simplified proof of Theorem~\ref{thm:star-local-hard} and for other helpful comments and pointers to the literature, and thank Andrei Constantinescu for suggestions that improved the exposition of Section~\ref{sec:hard-source}.
 
 \appendix
 \section{Wallace-tree multipliers are strip-local}
@@ -1215,7 +1198,7 @@ Then, writing $c_i$ for the carry bit in the $i$-th column, we have
 \[
 c_{i+1}=q_i\oplus(p_ic_i),
 \]
-with carry-in $c_0=0$. We can use this to derive the following equations, which we can use to compute each carry bit in parallel
+with carry-in $c_0=0$. Unrolling this recurrence gives the following equations, which compute each carry bit in parallel
 from the values $q_i,p_i$ and $c_0$:
 \begin{align*}
 c_1&=q_0\oplus p_0c_0\\
@@ -1338,7 +1321,7 @@ P_I=\bigwedge_{t=a}^i p_t,
 \qquad
 Q_I=\bigoplus_{t=a}^i \Bigl(q_t\wedge\bigwedge_{u=t+1}^i p_u\Bigr).
 \]
-Suppose $I$ crosses a top column, and let $s$ be the highest top column it crosses. Then $p_s=q_s=0$, so $P_I=0$, and every term
+Suppose $I$ contains a top column, and let $s$ be the highest top column it contains. Then $p_s=q_s=0$, so $P_I=0$, and every term
 of $Q_I$ with $t\le s$ vanishes, since it contains the factor $q_s$ if $t=s$ and the factor $p_s$ if $t<s$. Consequently
 $(P_I,Q_I)$ depends only on the signal pairs $(p_t,q_t)$ with $t>s$, which lie in the strip containing column $i$.
 
@@ -1360,8 +1343,23 @@ that every wire of the multiplier is constant or a Boolean function of the parti
 \end{proof}
 
 \section{Lean formalization}
+\label{app:lean}
 
 We provide a Lean~4 formalization of the main theorems, generated by Claude Fable 5.1, at \url{https://github.com/dysfunctor/associativity}. We are not aware of an established library for proof complexity or arithmetic circuits, so this formalization includes an implementation of these definitions. While we have inspected these definitions ourselves, we caution that they are a potential source of error.
 
+\section*{AI Methodology}
+
+The main ideas and the core proof of the associativity lower bound are due to GPT-5.6-Sol. This materially affected Sections~\ref{sec:hard-source}, \ref{sec:rho}, \ref{sec:reduction}, and~\ref{sec:frege}, and Appendix~\ref{app:architectures}. During the verification process, the author reformulated and rewrote the definitions, lemma statements, and proofs with the assistance of Claude Fable 5, and added attributions along the way. The author wrote initial drafts of the expository text, including the introduction,
+proof outline, and conclusion, and used Claude Fable 5 afterwards to improve presentation.
+
+The author produced the diagrams with assistance from Claude Fable 5. The author drew each figure by hand, sent a photo to Claude, and then refined the generated
+diagram with further prompting.
+
+The Lean formalization (Appendix~\ref{app:lean}) was generated by Claude Fable 5.1.
+
+The author verified the correctness and originality of all content, including references, and takes full responsibility for the paper's content.
+
+\bibliographystyle{amsalpha}
+\bibliography{references}
 
 \end{document}

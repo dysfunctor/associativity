@@ -47,7 +47,7 @@ below gives each item's number in the paper with its label in parentheses.
 | `AssocLB/Multiplier/Circuit.lean` | §2, circuits and Tseitin encodings; exactness, used for the array multiplier, the Wallace tree and the miter |
 | `AssocLB/Multiplier/ArrayMultiplier.lean` | §2, Fig. 1 (`fig:array-multiplier`): the array multiplier `arrayMul` as an exact encoding |
 | `AssocLB/Multiplier/ArrayStripLocal.lean` | §4, Prop. 4.6 (`prop:array-strip-local`): the array multiplier is strip-local |
-| `AssocLB/Multiplier/Assoc.lean` | §3, Def. 3.1 (Associativity miter; `def:assoc`): the associativity formula `Assoc_n` |
+| `AssocLB/Multiplier/Assoc.lean` | §3, Def. 3.1 (Associativity formula; `def:assoc`): the associativity formula `Assoc_n` |
 | `AssocLB/Multiplier/StripLocal.lean` | §4, Defs. 4.1 (`g`-strip; `def:g-strip`), 4.2 (`g`-sparse restriction; `def:g-sparse`), 4.3 (Strip-local; `def:strip-local`); Obs. 4.5 (Strips count their partial products; `obs:strip-counts`) |
 | `AssocLB/Multiplier/CarryLookahead.lean` | Appendix, Def. A.1 (Carry-lookahead adder; `def:cla`): the semantics of carry-lookahead addition (group propagate/generate folds) |
 | `AssocLB/Multiplier/WallaceTree.lean` | Appendix, Defs. A.1 (Carry-lookahead adder; `def:cla`), A.2 (Wallace-tree multiplier; `def:wallace`), Obs. A.3 (`obs:wallace-exact`): the Wallace-tree multiplier `wallaceMul` as an exact encoding |

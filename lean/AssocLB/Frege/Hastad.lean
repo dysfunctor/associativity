@@ -18,8 +18,8 @@ of `PM(Grid_t)`, the functional onto pigeonhole principle on the odd grid, has s
 
 ## Main definitions
 
-* `HastadGridPM 𝓕`: the weak form of Theorem [thm:hastad] (the display `eq:hastad-weak` of the
-  paper) for the Frege system `𝓕`, as a proposition.
+* `HastadGridPM 𝓕`: the weak form of Theorem [thm:hastad] (its second, "in particular"
+  statement) for the Frege system `𝓕`, as a proposition.
 
 ## Design notes
 
@@ -45,7 +45,7 @@ constant `c > 0` such that for every odd `t ≥ 3` and every depth `1 ≤ d ≤ 
 every refutation of `PM(Grid_t)` of depth at most `d` has size at least `exp(t^{c/d})`, stated
 as `t^{c/d} ≤ log |π|`.
 
-Paper: Theorem [thm:hastad], second statement (`eq:hastad-weak`); Håstad, Theorem 5.1. -/
+Paper: Theorem [thm:hastad], second statement; Håstad, Theorem 5.1. -/
 def HastadGridPM (𝓕 : FregeSystem) : Prop :=
   ∃ c : ℝ, 0 < c ∧ ∀ t : ℕ, Odd t → 3 ≤ t → ∀ d : ℕ, 1 ≤ d →
     (d : ℝ) ≤ c * Real.log t / Real.log (Real.log t) →
